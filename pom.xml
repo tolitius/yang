@@ -22,7 +22,7 @@
     <url>https://github.com/tolitius/yang</url>
     <connection>scm:git:git://github.com/tolitius/yang.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/tolitius/yang.git</developerConnection>
-    <yang>HEAD</yang>
+    <tag>HEAD</tag>
   </scm>
   <dependencies>
     <dependency>
