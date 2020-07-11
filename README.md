@@ -1,4 +1,4 @@
-## yang <img src="doc/img/yang-logo.png" width="84px">
+## yang <img src="doc/img/yang-logo.png" width="42px">
 
 the yang of Clojure's yin
 
