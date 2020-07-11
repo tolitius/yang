@@ -1,6 +1,6 @@
 ## yang <img src="doc/img/yang-logo.png" width="42px">
 
-the yang of Clojure's yin
+.. of Clojure's yin
 
 [![<! release](https://img.shields.io/badge/dynamic/json.svg?label=release&url=https%3A%2F%2Fclojars.org%2Ftolitius%2Fyang%2Flatest-version.json&query=version&colorB=blue)](https://github.com/tolitius/yang/releases)
 [![<! clojars](https://img.shields.io/clojars/v/tolitius/yang.svg)](https://clojars.org/tolitius/yang)
