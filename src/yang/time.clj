@@ -8,11 +8,11 @@
 (def epoch Instant/EPOCH)
 
 (def time>
-  "(sort-by :foo time> [instant1 instant2])"
+  "(sort-by :foo time> [{:foo t3} {:foo t2} {:foo t1}])"
   (comparator (fn [x y] (.isAfter x y))))
 
 (def time<
-  "(sort-by :foo time< [instant1 instant2])"
+  "(sort-by :foo time< [{:foo t3} {:foo t2} {:foo t1}])"
   (comparator (fn [x y] (.isBefore x y))))
 
 (defn str-now []
@@ -108,7 +108,15 @@
       (.toInstant)
       (.toEpochMilli)))
 
-(defmacro measure [fname report f]
+(defmacro measure
+  "measures a form:
+   => (t/measure \"42 sum\"
+                 println
+                 (reduce + (range 42)))
+      \"42 sum\" took: 49,054 nanos
+      861
+  "
+  [fname report f]
   `(let [start# (System/nanoTime)
          res# (~@f)
          done# (System/nanoTime)]
@@ -116,8 +124,14 @@
      res#))
 
 (defmacro time-it
+  "times a form and returns result and time it took in ms:
+
+   => (t/time-it  (reduce + (range 42)))
+   [861 {:unit \"ms\", :time 0.049786}]
+  "
   [expr]
   `(let [start# (. System (nanoTime))
-         ret# ~expr]
-     [ret# {:time (/ (double (- (. System (nanoTime)) start#)) 1000000.0)
+         ret# ~expr
+         done# (. System (nanoTime))]
+     [ret# {:time (/ (double (- done# start#)) 1000000.0)
             :unit "ms"}]))
