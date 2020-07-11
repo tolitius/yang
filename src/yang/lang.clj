@@ -249,7 +249,7 @@
   (.thenApply cf (reify Function (apply [_ x] (f x)))))
 
 (defn group-by-ns
-  "=> (group-by-ns {:a {:one :a-one, :two :a-two}})
+  "=> (group-by-ns {:a/one :a-one :b/one :b-one :a/two :a-two :b/two :b-two})
 
       {:a {:one :a-one, :two :a-two}
        :b {:one :b-one, :two :b-two}}"
