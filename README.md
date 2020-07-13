@@ -55,7 +55,8 @@ false
 
 => (l/gzip-edn {:a 42 :b 28 :c [{:z #{:a :b 42}}]})
 #object["[B" 0x2aafa84f "[B@2aafa84f"]
-user=> (l/gunzip-edn *1)
+
+=> (l/gunzip-edn *1)
 {:a 42, :b 28, :c [{:z #{:b 42 :a}}]}
 ```
 
