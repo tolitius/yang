@@ -3,7 +3,7 @@
   (:import [java.io StringWriter]))
 
 (defn set-default-exception-handler
-  "(set-default-exception-handler {})
+  "(set-default-exception-handler)
    or
    (set-default-exception-handler {:log (fn [ex tname] (log/error ex tname))})  ;; to wrap log/error macro
    or
