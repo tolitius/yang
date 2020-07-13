@@ -130,6 +130,12 @@ false
  :running? #atom[false 0x340b4f07]}
 ```
 
+exceptions:
+
+```clojure
+=> (ex/set-default-exception-handler)
+```
+
 ## license
 
 Copyright © 2020 tolitius
