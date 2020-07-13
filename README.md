@@ -104,6 +104,8 @@ network:
 schedule:
 
 ```clojure
+=> (require '[yang.scheduler :as s])
+
 => (defn f []
          (println (s/thread-name))
          (Thread/sleep 5000))
@@ -133,6 +135,8 @@ false
 exceptions:
 
 ```clojure
+=> (require '[yang.exception :as ex])
+
 => (ex/set-default-exception-handler)
 ```
 
