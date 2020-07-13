@@ -63,6 +63,8 @@ false
 time:
 
 ```clojure
+=> (require '[yang.time :as t])
+
 => (def dates [{:date (t/now-utc)} {:date (t/now-utc)} {:date (t/now-utc)}])
 #'user/dates
 
