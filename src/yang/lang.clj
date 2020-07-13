@@ -4,8 +4,8 @@
             [clojure.string :as s]
             [clojure.pprint :as pp])
   (:import [java.util UUID]
-           [java.io ByteArrayOutputStream]
-           [java.util.zip GZIPOutputStream]
+           [java.io ByteArrayOutputStream ByteArrayInputStream Reader]
+           [java.util.zip GZIPOutputStream GZIPInputStream]
            [java.util.concurrent Future CompletableFuture]
            [java.util.function Supplier Function]
            [clojure.lang Reflector]))
@@ -351,13 +351,29 @@
        (catch Exception ex
          (printf "could not parse \"%s\" to EDN due to: %s" xs ex))))
 
-(defn edn->gzip [edn]
+(defn- reader->str [^Reader r]
+  (let [^StringBuilder sb (StringBuilder.)]
+    (loop [buf (char-array 128) n-read (.read r buf)]
+      (when (not= n-read -1)
+        (.append sb buf 0 n-read)
+        (recur buf (.read r buf))))
+    (.toString sb)))
+
+(defn gzip-edn [edn]
   (with-open [out (ByteArrayOutputStream.)
               gzip (GZIPOutputStream. out)]
     (do
       (.write gzip (.getBytes (str edn)))
       (.finish gzip)
       (.toByteArray out))))
+
+(defn gunzip-edn [^bytes bs]
+  (with-open [bais (ByteArrayInputStream. bs)
+              gis  (GZIPInputStream. bais)]
+    (-> gis
+        clojure.java.io/reader
+        reader->str
+        edn/read-string)))
 
 (defn bbuffer->str [bb]
   (when (instance? java.nio.ByteBuffer bb)
