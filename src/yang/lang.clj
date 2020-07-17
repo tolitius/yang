@@ -52,6 +52,10 @@
     (str v)
     ""))
 
+(defn sval? [v]
+  (and (string? v)
+       (not (s/blank? v))))
+
 (defn trim [s]
   (if (string? s)
     (s/trim s)))
