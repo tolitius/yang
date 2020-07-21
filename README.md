@@ -154,8 +154,8 @@ false
 
 ```clojure
 => (require '[yang.io :as io])
-nil
-user=> (io/file->bytes "src/yang/io.clj")
+
+=> (io/file->bytes "src/yang/io.clj")
 #object["[B" 0x6339e604 "[B@6339e604"]
 ```
 
