@@ -6,6 +6,14 @@
 [![<! clojars](https://img.shields.io/clojars/v/tolitius/yang.svg)](https://clojars.org/tolitius/yang)
 
 - [why](#why)
+- [show me](#show-me)
+  - [lang](#lang)
+  - [time](#time)
+  - [codec](#codec)
+  - [network](#network)
+  - [schedule](#schedule)
+  - [exceptions](#exceptions)
+  - [io](#io)
 - [license](#license)
 
 ## why
@@ -21,7 +29,7 @@ one thing they all have in common: **no external dependencies**
 
 ok. here are a few examples, there are many more inside:
 
-lang:
+### lang
 
 ```clojure
 => (require '[yang.lang :as l])
@@ -60,7 +68,7 @@ false
 {:a 42, :b 28, :c [{:z #{:b 42 :a}}]}
 ```
 
-time:
+### time
 
 ```clojure
 => (require '[yang.time :as t])
@@ -80,7 +88,7 @@ time:
 861
 ```
 
-codec:
+### codec
 
 ```clojure
 => (require '[yang.codec :as c])
@@ -94,7 +102,7 @@ codec:
 "distance from you to mars is 69,561,042"
 ```
 
-network:
+### network
 
 ```clojure
 => (require '[yang.network :as n])
@@ -103,7 +111,7 @@ network:
 "tweedledee/10.143.34.42"
 ```
 
-schedule:
+### schedule
 
 ```clojure
 => (require '[yang.scheduler :as s])
@@ -134,12 +142,21 @@ false
  :running? #atom[false 0x340b4f07]}
 ```
 
-exceptions:
+### exceptions
 
 ```clojure
 => (require '[yang.exception :as ex])
 
 => (ex/set-default-exception-handler)
+```
+
+### io
+
+```clojure
+=> (require '[yang.io :as io])
+nil
+user=> (io/file->bytes "src/yang/io.clj")
+#object["[B" 0x6339e604 "[B@6339e604"]
 ```
 
 ## license
