@@ -2,6 +2,7 @@
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.string :as s]
+            [clojure.set :as sets]
             [clojure.pprint :as pp])
   (:import [java.util UUID]
            [java.io ByteArrayOutputStream ByteArrayInputStream Reader]
@@ -336,8 +337,8 @@
          :a)
    => [{:a 31, :b 27} {:a 28, :b 42}]"
   (let [f #(set (map on %))
-        inter (clojure.set/intersection (f xs1)
-                                        (f xs2))]
+        inter (sets/intersection (f xs1)
+                                 (f xs2))]
     (reduce (fn [a m]
               (if (inter (m on))
                 (conj a m)
