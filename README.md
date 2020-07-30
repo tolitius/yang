@@ -115,10 +115,35 @@ false
 
 ```clojure
 => (require '[yang.scheduler :as s])
+```
+
+schedule functions to run on intervals:
+
+```clojure
+=> (def hh (s/every 1000 #(println "hey humans!")))
+#'user/hh
+
+hey humans!
+hey humans!
+hey humans!
+hey humans!
+hey humans!
+hey humans!
+hey humans!
+hey humans!
+hey humans!
+
+user=> (s/stop hh)
+true
+```
+
+start/stop a farm of threads running a function:
+
+```clojure
 
 => (defn f []
-         (println (s/thread-name))
-         (Thread/sleep 5000))
+     (println (s/thread-name))
+     (Thread/sleep 5000))
 #'user/f
 
 ;; schedule a function "f" to run with 42 threads:
