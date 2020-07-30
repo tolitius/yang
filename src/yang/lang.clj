@@ -385,13 +385,13 @@
     (String. (.array ^java.nio.ByteBuffer bb))))
 
 (defn str->bytes
-  ([xs]
+  ([^String xs]
    (str->bytes xs "UTF-8"))
   ([xs enc]
    (.getBytes xs enc)))
 
 (defn bytes->str
-  ([bs]
+  ([^bytes bs]
    (bytes->str bs "UTF-8"))
   ([bs enc]
    (String. bs enc)))
