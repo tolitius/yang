@@ -59,7 +59,7 @@
     (.scheduleAtFixedRate (Executors/newScheduledThreadPool 1)
       f 0 interval time-unit))))
 
-(defn do-times [n f]
+(defn ftimes [n f]
   (future
     (dotimes [_ n]
       (try (f)

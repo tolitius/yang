@@ -167,6 +167,17 @@ false
  :running? #atom[false 0x340b4f07]}
 ```
 
+schedule to run a function `n` times (on a different thread):
+
+```clojure
+=> (sc/ftimes 5 #(println "lotery numbers are:" (repeatedly 5 (fn [] (rand-int 42)))))
+lotery numbers are: (31 2 27 29 28)
+lotery numbers are: (3 28 40 15 1)
+lotery numbers are: (13 26 18 19 21)
+lotery numbers are: (37 18 18 23 17)
+lotery numbers are: (7 16 20 35 8)
+```
+
 ### exceptions
 
 ```clojure
