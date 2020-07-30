@@ -384,6 +384,18 @@
   (when (instance? java.nio.ByteBuffer bb)
     (String. (.array ^java.nio.ByteBuffer bb))))
 
+(defn str->bytes
+  ([xs]
+   (str->bytes xs "UTF-8"))
+  ([xs enc]
+   (.getBytes xs enc)))
+
+(defn bytes->str
+  ([bs]
+   (bytes->str bs "UTF-8"))
+  ([bs enc]
+   (String. bs enc)))
+
 (defn slurp-resource [path]
   (-> path
       io/resource
