@@ -1,6 +1,6 @@
 {:paths ["src"]
  :deps {}
- :aliases {:jar {:extra-deps {seancorfield/depstar {:mvn/version "1.0.94"}}
+ :aliases {:jar {:extra-deps {seancorfield/depstar {:mvn/version "1.0.97"}}
                  :main-opts ["-m" "hf.depstar.jar" "yang.jar"]}
            :install {:extra-deps {deps-deploy/deps-deploy {:mvn/version "0.0.9"}}
                      :main-opts ["-m" "deps-deploy.deps-deploy" "install" "yang.jar"]}
