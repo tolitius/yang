@@ -40,6 +40,10 @@ ok. here are a few examples, there are many more inside:
 => (l/fmv {"a" 42 "b" 34} inc)
 {"a" 43, "b" 35}
 
+=> (l/dissoc-in {:foo {:bar {:a 42 :b "don't need this"}}}
+                [:foo :bar :b])
+{:foo {:bar {:a 42}}}
+
 => (l/dash-keys {:a_foo 42 :b_bar 34})
 {:a-foo 42, :b-bar 34}
 
