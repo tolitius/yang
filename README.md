@@ -115,7 +115,7 @@ false
 "tweedledee/10.143.34.42"
 ```
 
-```
+```clojure
 => (n/uri->map "postgresql://192.168.10.42:4242/planets")
 
 {:path "/planets",
@@ -123,6 +123,21 @@ false
  :fragment nil,
  :authority "192.168.10.42:4242",
  :port 4242,
+ :host "192.168.10.42",
+ :scheme-specific-part "//192.168.10.42:4242/planets",
+ :query nil,
+ :scheme "postgresql"}
+```
+
+```clojure
+=> (n/jdbc-uri->map "jdbc:postgresql://192.168.10.42:4242/planets")
+
+{:path "/planets",
+ :user-info nil,
+ :fragment nil,
+ :authority "192.168.10.42:4242",
+ :port 4242,
+ :dbname "planets",
  :host "192.168.10.42",
  :scheme-specific-part "//192.168.10.42:4242/planets",
  :query nil,

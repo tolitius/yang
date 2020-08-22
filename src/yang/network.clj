@@ -16,3 +16,11 @@
      :scheme (.getScheme u)
      :scheme-specific-part (.getSchemeSpecificPart u)
      :user-info (.getUserInfo u)}))
+
+(defn jdbc-uri->map [uri]
+  (when (seq uri)
+    (let [wo-jdbc (.substring uri 5)              ;; jdbc:postgres:1.2.3.4 => postgres:1.2.3.4
+          {:keys [path] :as m} (uri->map wo-jdbc)
+          dbname (->> (rest path)                 ;; "/foo" => "foo"
+                      (apply str))]
+      (assoc m :dbname dbname))))
