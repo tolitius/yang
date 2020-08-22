@@ -115,6 +115,20 @@ false
 "tweedledee/10.143.34.42"
 ```
 
+```
+=> (n/uri->map "postgresql://192.168.10.42:4242/planets")
+
+{:path "/planets",
+ :user-info nil,
+ :fragment nil,
+ :authority "192.168.10.42:4242",
+ :port 4242,
+ :host "192.168.10.42",
+ :scheme-specific-part "//192.168.10.42:4242/planets",
+ :query nil,
+ :scheme "postgresql"}
+```
+
 ### schedule
 
 ```clojure
