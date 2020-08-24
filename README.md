@@ -14,6 +14,9 @@
   - [schedule](#schedule)
   - [exceptions](#exceptions)
   - [io](#io)
+  - [java](#java)  
+    - [from java](#from-java)  
+    - [from clojure](#from-clojure)  
 - [license](#license)
 
 ## why
@@ -226,6 +229,33 @@ lotery numbers are: (7 16 20 35 8)
 
 => (io/file->bytes "src/yang/io.clj")
 #object["[B" 0x6339e604 "[B@6339e604"]
+```
+
+### java
+
+#### from Java
+
+```java
+jshell> import tolitius.Yang;
+
+jshell> var m = Map.of("foo", 42, "nested", Map.of("bar", 34), "zoo", 28)
+m ==> {foo=42, nested={bar=34}, zoo=28}
+
+jshell> var edn = Yang.mapToEdn(m)
+edn ==> {:foo 42, :nested {:bar 34}, :zoo 28}
+
+// so now it can be injected in any Clojure lib that is called from Java and expects EDN
+```
+
+#### from Clojure
+
+```clojure
+=> (require '[yang.java :as j])
+
+=> (def m (java.util.HashMap. {"crux.id/foo" {"crux.db/bar" "baz"} "crux.asnwer/life" 42}))
+
+=> (j/map->edn m)
+{:crux.id/foo #:crux.db{:bar "baz"}, :crux.asnwer/life 42}
 ```
 
 ## license
