@@ -1,4 +1,4 @@
-{:paths ["src"]
+{:paths ["src" "classes"]
  :deps {}
  :aliases {:jar {:extra-deps {seancorfield/depstar {:mvn/version "1.0.97"}}
                  :main-opts ["-m" "hf.depstar.jar" "yang.jar"]}
@@ -6,3 +6,8 @@
                      :main-opts ["-m" "deps-deploy.deps-deploy" "install" "yang.jar"]}
            :deploy {:extra-deps {deps-deploy/deps-deploy {:mvn/version "0.0.9"}}
                     :main-opts ["-m" "deps-deploy.deps-deploy" "deploy" "yang.jar" "true"]}}}
+
+;; until https://github.com/seancorfield/depstar/issues/37 is completed:
+
+;; to build a jar with "java.java" AOTed without "clojure/spec" artifacts:
+;; clj -e "(compile 'yang.java)"; clj -A:jar; zip -d yang.jar clojure/\*;

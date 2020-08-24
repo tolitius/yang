@@ -19,3 +19,4 @@ out/
 *.iws
 .eastwood
 .rebel*
+.DS_Store

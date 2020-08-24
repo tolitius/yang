@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>tolitius</groupId>
   <artifactId>yang</artifactId>
-  <version>0.1.13</version>
+  <version>0.1.14</version>
   <name>yang</name>
   <description>the yang of Clojure's ying</description>
   <url>https://github.com/tolitius/yang</url>
