@@ -9,5 +9,5 @@
 
 ;; until https://github.com/seancorfield/depstar/issues/37 is completed:
 
-;; to build a jar with "java.java" AOTed without "clojure/spec" artifacts:
+;; to build a jar with "yang.java" AOTed without "clojure/spec" artifacts:
 ;; clj -e "(compile 'yang.java)"; clj -A:jar; zip -d yang.jar clojure/\*;
