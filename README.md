@@ -252,10 +252,10 @@ edn ==> {:foo 42, :nested {:bar 34}, :zoo 28}
 ```clojure
 => (require '[yang.java :as j])
 
-=> (def m (java.util.HashMap. {"crux.id/foo" {"crux.db/bar" "baz"} "crux.asnwer/life" 42}))
+=> (def m (java.util.HashMap. {"crux.id/foo" {"crux.db/bar" "baz"} "crux.answer/life" 42}))
 
 => (j/map->edn m)
-{:crux.id/foo #:crux.db{:bar "baz"}, :crux.asnwer/life 42}
+{:crux.id/foo #:crux.db{:bar "baz"}, :crux.answer/life 42}
 ```
 
 ## license
