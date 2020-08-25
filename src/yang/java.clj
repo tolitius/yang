@@ -10,6 +10,7 @@
             ; ^{:static true} [fmk [java.util.Map clojure.lang.IFn] java.util.Map]
             ; ^{:static true} [fmv [java.util.Map clojure.lang.IFn] java.util.Map]
             ^{:static true} [toKw [String] clojure.lang.Keyword]
+            ^{:static true} [comp ["[Ljava.lang.Object;"] clojure.lang.IFn]
             ^{:static true} [toFun [Object] clojure.lang.IFn]])
 
 (defn map->edn
@@ -43,6 +44,9 @@
 
 (defn -mapToEdn [m]
   (map->edn m))
+
+(defn -comp [& args]
+  (apply comp args))
 
 (defn -toKw [s]
   (keyword s))
