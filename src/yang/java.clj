@@ -6,11 +6,11 @@
 
 (gen-class
   :name tolitius.Yang
-  :methods [^{:static true} [mapToEdn [java.util.Map] java.util.Map]]
-           ; [^{:static true} [fmk [java.util.Map clojure.lang.IFn] java.util.Map]]
-           ; [^{:static true} [fmv [java.util.Map clojure.lang.IFn] java.util.Map]]
-           [^{:static true} [toKw [String] clojure.lang.Keyword]]
-           [^{:static true} [toFun [Object] clojure.lang.IFn]])
+  :methods [^{:static true} [mapToEdn [java.util.Map] java.util.Map]
+            ; ^{:static true} [fmk [java.util.Map clojure.lang.IFn] java.util.Map]
+            ; ^{:static true} [fmv [java.util.Map clojure.lang.IFn] java.util.Map]
+            ^{:static true} [toKw [String] clojure.lang.Keyword]
+            ^{:static true} [toFun [Object] clojure.lang.IFn]])
 
 (defn map->edn
   ;; from https://github.com/juxt/crux/blob/ca9e15d2119aef5e4605363a0979793183bea440/crux-kafka-connect/src/crux/kafka/connect.clj#L24-L30
