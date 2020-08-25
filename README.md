@@ -247,6 +247,47 @@ edn ==> {:foo 42, :nested {:bar 34}, :zoo 28}
 // so now it can be injected in any Clojure lib that is called from Java and expects EDN
 ```
 
+##### composing Java and Clojure functions
+
+```java
+jshell> import tolitius.Yang;
+        import com.google.common.base.CaseFormat;
+        import clojure.java.api.Clojure;
+
+        var require = Clojure.var("clojure.core", "require");
+        var kw = Clojure.var("clojure.core", "keyword");
+        var comp = Clojure.var("clojure.core", "comp");
+
+        require.invoke(Clojure.read("yang.lang"));
+        var fmk = Clojure.var("yang.lang", "fmk");
+
+require ==> #'clojure.core/require
+kw ==> #'clojure.core/keyword
+comp ==> #'clojure.core/comp
+fmk ==> #'yang.lang/fmk
+
+jshell> var m = Map.of("answerToLife", 42, "meaningOfLifeQuestion", "what is the...")
+m ==> {answerToLife=42, meaningOfLifeQuestion=what is the...}
+
+jshell> Function<String, String> jdash = x -> CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, x);
+jdash ==> $Lambda$34/0x0000000800e60040@213c3543
+```
+
+convert `java.util.function.Function` / `Consumer` / `BiFunction` / `BiConsumer` to a Clojure function
+so it later be composed together with other Clojure functions:
+
+```java
+jshell> var dashKeys = Yang.toFun(jdash);
+dashKeys ==> yang.java$jfun__GT_fun$fn__158@9d7ccfe
+```
+
+compose it:
+
+```java
+jshell> fmk.invoke(m, comp.invoke(kw, dashKeys))
+$14 ==> {:answer-to-life 42, :meaning-of-life-question "what is the..."}
+```
+
 #### from Clojure
 
 ```clojure
