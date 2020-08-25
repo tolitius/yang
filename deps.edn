@@ -1,7 +1,7 @@
 {:paths ["src" "classes"]
  :deps {}
- :aliases {:jar {:extra-deps {seancorfield/depstar {:mvn/version "1.0.97"}}
-                 :main-opts ["-m" "hf.depstar.jar" "yang.jar"]}
+ :aliases {:jar {:extra-deps {seancorfield/depstar {:git/url "https://github.com/seancorfield/depstar" :sha "cca7dc89caff5e255f28043d58d86a8322a60c68"}}
+                 :main-opts ["-m" "hf.depstar.jar" "yang.jar" "--exclude" "clojure/core/specs/alpha.*"]}
            :install {:extra-deps {deps-deploy/deps-deploy {:mvn/version "0.0.9"}}
                      :main-opts ["-m" "deps-deploy.deps-deploy" "install" "yang.jar"]}
            :deploy {:extra-deps {deps-deploy/deps-deploy {:mvn/version "0.0.9"}}

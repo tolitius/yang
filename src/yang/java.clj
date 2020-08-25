@@ -1,9 +1,16 @@
 (ns yang.java
-  [:import [java.util Map]])
+  ; (:require [yang.lang :as l])      ;; AOT'ed as well hence blows up the jar size. so hold off for now
+  (:import [clojure.lang Keyword IFn]
+           [java.util Map]
+           [java.util.function Function BiFunction Consumer BiConsumer]))
 
 (gen-class
   :name tolitius.Yang
-  :methods [^{:static true} [mapToEdn [java.util.Map] java.util.Map]])
+  :methods [^{:static true} [mapToEdn [java.util.Map] java.util.Map]]
+           ; [^{:static true} [fmk [java.util.Map clojure.lang.IFn] java.util.Map]]
+           ; [^{:static true} [fmv [java.util.Map clojure.lang.IFn] java.util.Map]]
+           [^{:static true} [toKw [String] clojure.lang.Keyword]]
+           [^{:static true} [toFun [Object] clojure.lang.IFn]])
 
 (defn map->edn
   ;; from https://github.com/juxt/crux/blob/ca9e15d2119aef5e4605363a0979793183bea440/crux-kafka-connect/src/crux/kafka/connect.clj#L24-L30
@@ -20,6 +27,31 @@
             v)])
        (into {})))
 
-;; a Java friendly face
+(defn jfun->fun
+  "convert a Java function to a Clojure fn
+   so it can be later composed together with other Clojure functions"
+  [fun]
+  (letfn [(instance-of [types v]
+            (some #(instance? % v) types))]
+    (condp instance-of fun
+      #{Function Consumer} (fn [x] (.apply fun x))
+      #{BiFunction BiConsumer} (fn [x y] (.apply fun x y))
+      :not-a-function)))
+
+
+;; a Java friendly faces
+
 (defn -mapToEdn [m]
   (map->edn m))
+
+(defn -toKw [s]
+  (keyword s))
+
+; (defn -fmk [m f]
+;   (l/fmk m f))
+
+; (defn -fmv [m f]
+;   (l/fmv m f))
+
+(defn -toFun [fun]
+  (jfun->fun fun))
