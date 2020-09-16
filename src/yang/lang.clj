@@ -421,6 +421,22 @@
   (-> (slurp-resource path)
       edn/read-string))
 
+;; threads
+
+(defn show-threads
+  "from: https://twitter.com/chrishouser/status/1306000820580876288"
+  []
+  (->>
+    (Thread/getAllStackTraces)
+    (map (fn [[thread frames]]
+           [(.getName thread)
+            (mapv #(read-string (pr-str %))
+                  frames)]))
+    (into {})
+    pp/pprint))
+
+;; reflection
+
 (defn static-method [clazz method params]
   (Reflector/invokeStaticMethod clazz method (into-array params)))
 

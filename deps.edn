@@ -11,3 +11,6 @@
 
 ;; to build a jar with "yang.java" AOTed without "clojure/spec" artifacts:
 ;; clj -e "(compile 'yang.java)"; clj -A:jar; zip -d yang.jar clojure/\*;
+
+;; deploy
+;; clojure -e "(compile 'yang.java)"; clojure -A:jar -A:deploy
