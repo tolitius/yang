@@ -14,9 +14,9 @@
   - [schedule](#schedule)
   - [exceptions](#exceptions)
   - [io](#io)
-  - [java](#java)  
-    - [from java](#from-java)  
-    - [from clojure](#from-clojure)  
+  - [java](#java)
+    - [from java](#from-java)
+    - [from clojure](#from-clojure)
 - [license](#license)
 
 ## why
@@ -36,38 +36,84 @@ ok. here are a few examples, there are many more inside:
 
 ```clojure
 => (require '[yang.lang :as l])
+```
 
+fn on every key in a map:
+
+```clojure
 => (l/fmk {"a" 42 "b" 34} keyword)
 {:a 42, :b 34}
+```
 
+fn on every value in a map:
+
+```clojure
 => (l/fmv {"a" 42 "b" 34} inc)
 {"a" 43, "b" 35}
+```
 
+dissoc-in.. oh, yea
+
+```clojure
 => (l/dissoc-in {:foo {:bar {:a 42 :b "don't need this"}}}
                 [:foo :bar :b])
 {:foo {:bar {:a 42}}}
+```
 
+tasty sequential UUIDs:
+
+```clojure
+=> (repeatedly 4 #(l/squuid))
+(#uuid "5f62baed-553c-49a1-ad85-2b387634e773"
+ #uuid "5f62baed-93d2-4e9a-bcd1-beedcaa7e1ee"
+ #uuid "5f62baed-b730-44f6-946f-d55b56893121"
+ #uuid "5f62baed-d45d-49be-9034-c661fe8069f1")
+```
+
+make it Clojure:
+
+```clojure
 => (l/dash-keys {:a_foo 42 :b_bar 34})
 {:a-foo 42, :b-bar 34}
+```
 
+thread `and` on functions:
+
+```clojure
 => (l/and-> 5 number? pos?)
 true
 => (l/and-> nil number? pos?)
 false
+```
 
+tame those namespaced keys:
+
+```clojure
 => (l/group-by-ns {:a/one :a-one :b/one :b-one :a/two :a-two :b/two :b-two})
 {:a {:one :a-one, :two :a-two},
  :b {:one :b-one, :two :b-two}}
+```
 
+be a database, do da joins:
+
+```clojure
 => (l/join [{:a 20, :b 34} {:a 31, :b 27} {:a 28, :b 42}]
            [{:a 31, :b 27} {:a 12, :b 4} {:a 28, :b 42}]
            :a)
 [{:a 31, :b 27} {:a 28, :b 42}]
+```
 
+merge maps, but merge it deep:
+
+```clojure
 => (l/merge-maps {:a {:b {:c 12}} :d 21 :z 34}
                  {:a {:b {:c 42}} :d 25})
 {:a {:b {:c 42}}, :d 25, :z 34}
+```
 
+gzip / gunzip edn:
+
+```clojure
 => (l/gzip-edn {:a 42 :b 28 :c [{:z #{:a :b 42}}]})
 #object["[B" 0x2aafa84f "[B@2aafa84f"]
 
@@ -79,7 +125,11 @@ false
 
 ```clojure
 => (require '[yang.time :as t])
+```
 
+sorting (java.time) instants:
+
+```clojure
 => (def dates [{:date (t/now-utc)} {:date (t/now-utc)} {:date (t/now-utc)}])
 #'user/dates
 
@@ -88,8 +138,11 @@ false
 ({:date #object[java.time.Instant 0x2f75a9b1 "2020-07-13T19:56:11.794186Z"]}
  {:date #object[java.time.Instant 0x9cc0505 "2020-07-13T19:56:11.794174Z"]}
  {:date #object[java.time.Instant 0x26cdd4af "2020-07-13T19:56:11.794141Z"]})
+```
 
-;; measure things
+measure things:
+
+```clojure
 => (t/measure "42 sum" println (reduce + (range 42)))
 "42 sum" took: 79,319 nanos
 861
@@ -99,7 +152,11 @@ false
 
 ```clojure
 => (require '[yang.codec :as c])
+```
 
+base64 is just too common:
+
+```clojure
 => (c/base64-encode (-> "distance from you to mars is 69,561,042" .getBytes))
 "ZGlzdGFuY2UgZnJvbSB5b3UgdG8gbWFycyBpcyA2OSw1NjEsMDQy"
 
@@ -113,10 +170,16 @@ false
 
 ```clojure
 => (require '[yang.network :as n])
+```
 
+name of da host:
+
+```clojure
 => n/hostname
 "tweedledee/10.143.34.42"
 ```
+
+destructure URIs:
 
 ```clojure
 => (n/uri->map "postgresql://192.168.10.42:4242/planets")
@@ -131,6 +194,8 @@ false
  :query nil,
  :scheme "postgresql"}
 ```
+
+even if URIs are JDBC:
 
 ```clojure
 => (n/jdbc-uri->map "jdbc:postgresql://192.168.10.42:4242/planets")
@@ -218,7 +283,11 @@ lotery numbers are: (7 16 20 35 8)
 
 ```clojure
 => (require '[yang.exception :as ex])
+```
 
+make sure no exception is left behind:
+
+```clojure
 => (ex/set-default-exception-handler)
 ```
 
@@ -226,7 +295,11 @@ lotery numbers are: (7 16 20 35 8)
 
 ```clojure
 => (require '[yang.io :as io])
+```
 
+read files for what they are.. bytes:
+
+```clojure
 => (io/file->bytes "src/yang/io.clj")
 #object["[B" 0x6339e604 "[B@6339e604"]
 ```

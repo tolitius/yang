@@ -21,6 +21,19 @@
 (defn uuid []
   (UUID/randomUUID))
 
+(defn squuid
+  "tasty sequential UUIDs
+   from: https://github.com/clojure-cookbook/clojure-cookbook/blob/1b3754a7f4aab51cc9b254ea102870e7ce478aa0/01_primitive-data/1-24_uuids.asciidoc"
+  []
+  (let [uuid (UUID/randomUUID)
+        time (System/currentTimeMillis)
+        secs (quot time 1000)
+        lsb (.getLeastSignificantBits uuid)
+        msb (.getMostSignificantBits uuid)
+        timed-msb (bit-or (bit-shift-left secs 32)
+                          (bit-and 0x00000000ffffffff msb))]
+    (java.util.UUID. timed-msb lsb)))
+
 (defn str->uuid [s]
   (when (seq s)
     (UUID/fromString s)))
