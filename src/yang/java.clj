@@ -33,8 +33,10 @@
   (letfn [(instance-of [types v]
             (some #(instance? % v) types))]
     (condp instance-of fun
-      #{Function Consumer} (fn [x] (.apply fun x))
-      #{BiFunction BiConsumer} (fn [x y] (.apply fun x y))
+      #{Function} (fn [x] (.apply fun x))
+      #{BiFunction} (fn [x y] (.apply fun x y))
+      #{Consumer} (fn [x] (.accept fun x))
+      #{BiConsumer} (fn [x y] (.accept fun x y))
       :not-a-function)))
 
 
