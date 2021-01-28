@@ -301,6 +301,17 @@
         (apply f maps)))
     maps))
 
+(defn remove-deep [key-set data]
+  "from https://stackoverflow.com/a/52041784/114359
+
+  Remove every key in the key-set from the data, deeply throughout its structure."
+  (clojure.walk/prewalk
+    (fn [node]
+      (if (map? node)
+        (apply dissoc node key-set)
+        node))
+    data))
+
 (defn merge-maps [& m]
   (apply deep-merge-with (fn [_ v] v) m))
 
