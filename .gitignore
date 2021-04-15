@@ -20,3 +20,5 @@ out/
 .eastwood
 .rebel*
 .DS_Store
+.calva/
+.lsp/
