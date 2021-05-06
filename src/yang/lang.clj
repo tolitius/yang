@@ -3,7 +3,8 @@
             [clojure.java.io :as io]
             [clojure.string :as s]
             [clojure.set :as sets]
-            [clojure.pprint :as pp])
+            [clojure.pprint :as pp]
+            [clojure.walk :as walk])
   (:import [java.util UUID]
            [java.io ByteArrayOutputStream ByteArrayInputStream Reader]
            [java.util.zip GZIPOutputStream GZIPInputStream]
@@ -52,6 +53,20 @@
         (for [[k v] m]
           [(f k) v])))
 
+(defn rfmk
+  "recursively apply f to each key k of map m"
+  [m f]
+  (let [fun (fn [[k v]]
+              (if (or (string? k)
+                      (simple-keyword? k))
+                [(f k) v]
+                [k v]))]
+    (walk/postwalk (fn [x]
+                     (if (map? x)
+                       (into {}
+                             (map fun x)) x))
+                   m)))
+
 (defn jcoll? [x]
   (instance? java.util.Collection x))
 
@@ -69,6 +84,14 @@
 (defn sval? [v]
   (and (string? v)
        (not (s/blank? v))))
+
+(defn lower-case [s]
+  (when (string? s)
+    (s/lower-case s)))
+
+(defn upper-case [s]
+  (when (string? s)
+    (s/upper-case s)))
 
 (defn trim [s]
   (if (string? s)
