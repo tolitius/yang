@@ -13,4 +13,4 @@
 ;; clj -e "(compile 'yang.java)"; clj -A:jar; zip -d yang.jar clojure/\*;
 
 ;; deploy
-;; clojure -e "(compile 'yang.java)"; clojure -A:jar -A:deploy
+;; rm -rf classes/*; clj -e "(compile 'yang.java)"; clj -A:jar; clj -A:deploy
