@@ -4,6 +4,7 @@
             [clojure.string :as s]
             [clojure.set :as sets]
             [clojure.pprint :as pp]
+            [clojure.pprint :as pp]
             [clojure.walk :as walk])
   (:import [java.util UUID]
            [java.io ByteArrayOutputStream ByteArrayInputStream Reader]
@@ -219,6 +220,10 @@
      (if (and r (seq fs))
        (apply and-> x fs)
        r))))
+
+(defn pretty [& args]
+  (with-out-str
+    (apply pp/pprint args)))
 
 (defn positive? [xs]
   (every? #(and-> % number? pos?)
