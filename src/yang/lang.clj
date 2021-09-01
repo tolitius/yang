@@ -473,6 +473,15 @@
   (-> (slurp-resource path)
       edn/read-string))
 
+(defn strip-margin
+  ([string]
+   (strip-margin string "\\|"))
+  ([string delimiter] (->> string
+                           s/split-lines
+                           (map s/triml)
+                           (map #(.replaceFirst % delimiter ""))
+                           (s/join "\n"))))
+
 ;; threads
 
 (defn show-threads
