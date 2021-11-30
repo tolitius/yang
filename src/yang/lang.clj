@@ -270,6 +270,15 @@
           (when-not (none? v)
             [k v]))))
 
+(defn remove-empty-keys
+  "=> (remove-empty-keys {:a 42 nil 37 \"\" 28 [] 12 {} 7 :b 34})
+      {:a 42 :b 34}"
+  [m]
+  (into {}
+        (for [[k v] m]
+          (when-not (none? k)
+            [k v]))))
+
 (defn props->map
   "java.util.Properties to map"
   [props]
