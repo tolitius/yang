@@ -27,11 +27,11 @@
   "tasty sequential UUIDs
    from: https://github.com/clojure-cookbook/clojure-cookbook/blob/1b3754a7f4aab51cc9b254ea102870e7ce478aa0/01_primitive-data/1-24_uuids.asciidoc"
   []
-  (let [uuid (UUID/randomUUID)
-        time (System/currentTimeMillis)
-        secs (quot time 1000)
-        lsb (.getLeastSignificantBits uuid)
-        msb (.getMostSignificantBits uuid)
+  (let [uuid      (UUID/randomUUID)
+        time      (System/currentTimeMillis)
+        secs      (quot time 1000)
+        lsb       (.getLeastSignificantBits uuid)
+        msb       (.getMostSignificantBits uuid)
         timed-msb (bit-or (bit-shift-left secs 32)
                           (bit-and 0x00000000ffffffff msb))]
     (java.util.UUID. timed-msb lsb)))
@@ -98,6 +98,10 @@
   (if (string? s)
     (s/trim s)))
 
+(defn eq-ignore-case [s1 s2]
+  (when (and (string? s1) (string? s2))
+    (= (s/lower-case s1) (s/lower-case s2))))
+
 (defn to-long [n]
   (if (number? n)
     (long n)))
@@ -149,9 +153,9 @@
   ([m]
    (fmk m name))
   ([m kns]
-  (->> (filter (fn [[k v]] (not= (namespace k)
-                                 (name kns))) m)
-       (into {}))))
+   (->> (filter (fn [[k v]] (not= (namespace k)
+                                  (name kns))) m)
+        (into {}))))
 
 (defn extract-key-ns
   "=> (extract-key-ns {:a/one :a-one :a/two :a-two :b/one :b-one :b/two :b-two}
@@ -163,8 +167,8 @@
   {kns (reduce-kv (fn [a k v]
                     (if (= (namespace k)
                            (name kns))
-                      (assoc a (-> k name keyword) ;; :foo/bar -> :bar
-                             v)
+                      (assoc a (-> k name keyword)          ;; :foo/bar -> :bar
+                               v)
                       a))
                   {}
                   m)})
@@ -209,8 +213,8 @@
 (defn camel-to-dash [k]
   (->> (map s/lower-case
             (s/split (name k) #"(?=[A-Z])"))
-    (s/join "-")
-    keyword))
+       (s/join "-")
+       keyword))
 
 (defn and->
   ([] true)
@@ -248,7 +252,7 @@
   ([v xs]
    (append-if-absent v xs ", "))
   ([v xs delim]
-   (if-not (re-find (re-pattern (str "(?i)" ;; case insensitive
+   (if-not (re-find (re-pattern (str "(?i)"                 ;; case insensitive
                                      (to-alpha-num v))) xs)
      (str xs delim v)
      xs)))
@@ -413,7 +417,7 @@
          [{:a 31, :b 27} {:a 12, :b 4} {:a 28, :b 42}]
          :a)
    => [{:a 31, :b 27} {:a 28, :b 42}]"
-  (let [f #(set (map on %))
+  (let [f     #(set (map on %))
         inter (sets/intersection (f xs1)
                                  (f xs2))]
     (reduce (fn [a m]
@@ -442,7 +446,7 @@
     (.toString sb)))
 
 (defn gzip-edn [edn]
-  (with-open [out (ByteArrayOutputStream.)
+  (with-open [out  (ByteArrayOutputStream.)
               gzip (GZIPOutputStream. out)]
     (do
       (.write gzip (.getBytes (str edn)))
