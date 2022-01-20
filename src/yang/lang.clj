@@ -75,7 +75,7 @@
   "case insensitive"
   [s v]
   (= (s/lower-case (or s ""))
-     v))
+     (s/lower-case (or v ""))))
 
 (defn str-val [v]
   (if v
@@ -97,10 +97,6 @@
 (defn trim [s]
   (if (string? s)
     (s/trim s)))
-
-(defn eq-ignore-case [s1 s2]
-  (when (and (string? s1) (string? s2))
-    (= (s/lower-case s1) (s/lower-case s2))))
 
 (defn to-long [n]
   (if (number? n)
