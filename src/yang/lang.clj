@@ -19,7 +19,9 @@
        true
        (catch Exception e)))
 
-(defn uuid []
+(defn uuid
+  "DEPRECATED: use clojure.core/random-uuid"
+  []
   (random-uuid))
 
 (defn squuid
@@ -35,16 +37,20 @@
                           (bit-and 0x00000000ffffffff msb))]
     (java.util.UUID. timed-msb lsb)))
 
-(defn str->uuid [s]
+(defn str->uuid
+  "DEPRECATED: use clojure.core/parse-uuid"
+  [s]
   (parse-uuid s))
 
 (defn fmv
-  "apply f to each value v of map m"
+  "DEPRECATED: use clojure.core/update-vals
+  apply f to each value v of map m"
   [m f]
   (update-vals m f))
 
 (defn fmk
-  "apply f to each key k of map m"
+  "DEPRECATED: use clojure.core/update-keys
+  apply f to each key k of map m"
   [m f]
   (update-keys m f))
 
@@ -100,12 +106,16 @@
   (if (number? n)
     (double n)))
 
-(defn parse-long [l]
-  (try (parse-long l)
+(defn parse-long
+  "DEPRECATED: use clojure.core/parse-long"
+  [l]
+  (try (clojure.core/parse-long l)
        (catch Exception e)))
 
-(defn parse-double [d]
-  (try (parse-double d)
+(defn parse-double
+  "DEPRECATED: use clojure.core/parse-double"
+  [d]
+  (try (clojure.core/parse-double d)
        (catch Exception e)))
 
 (defn parse-number [n]
