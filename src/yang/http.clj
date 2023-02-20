@@ -11,4 +11,4 @@
     {:error (-> resp
                 (update-in [:opts :headers] dissoc "Authorization") ;; strip JWT header
                 (update-in [:headers] dissoc :authorization)) ;; ^^
-     :status status}))
+     :status (or status 500)}))
