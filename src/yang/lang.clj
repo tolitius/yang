@@ -4,7 +4,6 @@
             [clojure.string :as s]
             [clojure.set :as sets]
             [clojure.pprint :as pp]
-            [clojure.pprint :as pp]
             [clojure.walk :as walk])
   (:import [java.util UUID]
            [java.io ByteArrayOutputStream ByteArrayInputStream Reader]
@@ -67,6 +66,34 @@
                        (into {}
                              (map fun x)) x))
                    m)))
+
+(defn filter-kv
+  "Takes a map, filters on (pred k v) for each map entry, returns a map."
+  [pred coll]
+  {:pre [(map? coll)]}
+  (persistent!
+   (reduce (fn [acc [k v]]
+             (if (pred k v)
+               (conj! acc [k v])
+               acc))
+           (transient {})
+           coll)))
+
+(defn map->keys-as-path
+  "Takes a nested map and returns a flat map where each key is the path of the original map.
+   => (map->path-keys {:a {:b 'abc'}})
+   {[:a :b] 'abc'}"
+  ([coll]
+   (map->keys-as-path [] coll))
+  ([path coll]
+   {:pre [(map? coll)]}
+   (->> coll
+        (reduce-kv (fn [acc k v]
+                     (if (and (map? v)
+                              (seq v))
+                       (merge acc (map->keys-as-path (conj path k) v))
+                       (assoc acc (conj path k) v)))
+                   {}))))
 
 (defn jcoll? [x]
   (instance? java.util.Collection x))
