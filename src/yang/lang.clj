@@ -91,7 +91,7 @@
         (reduce-kv (fn [acc k v]
                      (if (and (map? v)
                               (seq v))
-                       (merge acc (map->keys-as-path (conj path k) v))
+                       (merge acc (map->keys-as-path v (conj path k)))
                        (assoc acc (conj path k) v)))
                    {}))))
 
