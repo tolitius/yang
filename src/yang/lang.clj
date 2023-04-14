@@ -84,7 +84,7 @@
    => (map->path-keys {:a {:b 'abc'}})
    {[:a :b] 'abc'}"
   ([m]
-   (map->keys-as-path [] m))
+   (map->keys-as-path m []))
   ([m path]
    {:pre [(map? m)]}
    (->> m
