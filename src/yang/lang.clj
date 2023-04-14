@@ -68,26 +68,26 @@
                    m)))
 
 (defn filter-kv
-  "Takes a map, filters on (pred k v) for each map entry, returns a map."
-  [pred coll]
-  {:pre [(map? coll)]}
+  "Takes a map, filters on (f k v) for each map entry, returns a map."
+  [m f]
+  {:pre [(map? m)]}
   (persistent!
    (reduce (fn [acc [k v]]
-             (if (pred k v)
+             (if (f k v)
                (conj! acc [k v])
                acc))
            (transient {})
-           coll)))
+           m)))
 
 (defn map->keys-as-path
   "Takes a nested map and returns a flat map where each key is the path of the original map.
    => (map->path-keys {:a {:b 'abc'}})
    {[:a :b] 'abc'}"
-  ([coll]
-   (map->keys-as-path [] coll))
-  ([path coll]
-   {:pre [(map? coll)]}
-   (->> coll
+  ([m]
+   (map->keys-as-path [] m))
+  ([m path]
+   {:pre [(map? m)]}
+   (->> m
         (reduce-kv (fn [acc k v]
                      (if (and (map? v)
                               (seq v))
