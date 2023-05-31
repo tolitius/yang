@@ -554,3 +554,12 @@
   (let [f (.. obj getClass (getDeclaredField field))]
     (. f (setAccessible true))
     (. f (get obj))))
+
+(defn seq->hash-map
+  "Convert Sequential type to PersistentHashMap"
+  [{:keys [key-fn val-fn]
+    :or {key-fn hash
+         val-fn identity}} list-of-vals]
+  (->> (for [item list-of-vals]
+         [(key-fn item) (val-fn item)])
+       (into {})))

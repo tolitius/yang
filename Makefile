@@ -28,3 +28,6 @@ tree:
 
 repl:
 	clojure -A:dev -A:repl
+
+test-it:
+	clojure -X:test
