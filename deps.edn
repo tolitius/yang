@@ -1,6 +1,6 @@
 {:paths ["src" "classes"]
- :deps {}
- :aliases {:dev {:extra-deps {metosin/jsonista {:mvn/version "0.3.4"}}}
+ :deps {} ;; deps no deps
+ :aliases {:dev {:extra-deps {metosin/jsonista {:mvn/version "0.3.8"}}}
            :repl {;; :extra-paths ["test" "test/resources"]
                   :extra-deps {nrepl/nrepl {:mvn/version "0.7.0"}
                                cider/cider-nrepl {:mvn/version "0.22.4"}

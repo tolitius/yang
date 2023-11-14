@@ -196,6 +196,26 @@
                   {}
                   m)})
 
+(defn- unbrace
+  "=> (unbrace \"I choose the {{choice}} pill\" :choice \"red\")
+
+   \"I choose the red pill\""
+  [this k with]
+  (let [wrap (fn [x] (str "\\{\\{" x "?\\}\\}"))
+        in-braces (-> k name wrap re-pattern)]
+    (s/replace this in-braces with)))
+
+(defn rebrace
+  "=> (rebrace \"{{child}}, I am your {{parent}}\"
+               {:child \"Luke\" :parent \"father\"})
+
+   \"Luke, I am your father\""
+  [this with]
+  (reduce-kv (fn [braced k v]
+               (unbrace braced k v))
+    this
+    with))
+
 (defn replace-in-kw
   "=> (replace-in-kw :foo-bar-baz \"bar\" \"zoo\")
       :foo-zoo-baz"

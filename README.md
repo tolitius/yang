@@ -70,6 +70,14 @@ tasty sequential UUIDs:
  #uuid "5f62baed-d45d-49be-9034-c661fe8069f1")
 ```
 
+templating:
+
+```clojure
+=> (l/rebrace "{{child}}, I am your {{parent}}"
+              {:child "Luke" :parent "father"})
+"Luke, I am your father"
+```
+
 make it Clojure:
 
 ```clojure
