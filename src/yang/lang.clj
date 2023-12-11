@@ -371,6 +371,27 @@
           {}
           m))
 
+(defn index-by
+  "given a sequence of maps
+   index them by the key
+
+   (!) duplicate/nil keys: latest wins (!)
+
+   => (index [{:a 123, :b \"first\"}
+              {:a 234, :b \"second\"}
+              {:a 345, :b \"third\"}]  ;; seq of maps
+              :a)                      ;; key to index by
+
+      {123 {:a 123, :b \"first\"},
+       234 {:a 234, :b \"second\"},
+       345 {:a 345, :b \"third\"}}
+  "
+  [by xs]
+  (reduce (fn [idx m]
+            (assoc idx (by m) m))
+          {}
+          xs))
+
 (defn deep-merge-with
   "like merge-with, but merges maps recursively, appling the given fn
    only when there's a non-map at a particular level.
