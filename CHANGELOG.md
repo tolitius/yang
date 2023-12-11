@@ -1,7 +1,7 @@
-# 0.1.38
+# 0.1.39
 
-+ rebrace
-+ index-by
++ [rebrace](https://github.com/tolitius/yang/blob/cd8c4e94160b5e0e375a49b0dd0cb881015ddb41/src/yang/lang.clj#L208)
++ [index-by](https://github.com/tolitius/yang/blob/cd8c4e94160b5e0e375a49b0dd0cb881015ddb41/src/yang/lang.clj#L374)
 
 # 0.1.34
 
