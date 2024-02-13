@@ -154,6 +154,7 @@
 
 (defn value? [v]
   (or (number? v)
+      (uuid? v)
       (seq v)))
 
 (defn value [v]
