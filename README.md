@@ -154,11 +154,11 @@ validation:
                 says-meow?
                 one-tail?
                 four-legs?]
-              {:legs 3 :tail 3 :says "bow" :purrs true})
+               {:legs 3 :tail 3 :says "bow" :purrs true})
 
 ;; => [{:error "cat doesn't say meow"}
-       {:error "cat doesn't have 1 tail"}
-       {:error "cat doesn't have 4 legs"}]
+;;     {:error "cat doesn't have 1 tail"}
+;;     {:error "cat doesn't have 4 legs"}]
 
 => (y/validate [purrs?
                 says-meow?
