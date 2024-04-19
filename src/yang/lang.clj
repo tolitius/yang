@@ -491,6 +491,68 @@
                 a))
             [] xs1)))
 
+(defn validate
+  "
+  takes in a sequence of validator functions and a fact to validate
+  returns :valid if all validators pass, otherwise returns a sequence of errors
+
+  if check-all? is true, all validators will be run
+  otherwise, validators will be run until the first error is found
+
+  example:
+
+  (defn purrs? [cat]
+    (or (= (:purrs cat) true)
+        {:error \"cat doesn't purr\"}))
+
+  (defn says-meow? [cat]
+    (or (= (:says cat) \"meow\")
+        {:error \"cat doesn't say meow\"}))
+
+  (defn one-tail? [cat]
+    (or (= (:tail cat) 1)
+        {:error \"cat doesn't have 1 tail\"}))
+
+  (defn four-legs? [cat]
+    (or (= (:legs cat) 4)
+        {:error \"cat doesn't have 4 legs\"}))
+
+  (validate [purrs?
+             says-meow?
+             one-tail?
+             four-legs?]
+            {:legs 3 :tail 3 :says \"bow\" :purrs true})
+
+  ; => [{:error \"cat doesn't say meow\"}
+        {:error \"cat doesn't have 1 tail\"}
+        {:error \"cat doesn't have 4 legs\"}]
+
+  (validate [purrs?
+             says-meow?
+             one-tail?
+             four-legs?]
+            {:legs 3 :tail 3 :says \"bow\" :purrs true}
+            {:check-all? false})
+
+  ; => [{:error \"cat doesn't say meow\"}]
+  "
+  ([validators fact]
+   (validate validators
+             fact
+             {:check-all? true}))
+  ([validators fact {:keys [check-all?]}]
+   (let [results (reduce (fn [results validator]
+                           (let [{:keys [error] :as result} (validator fact)
+                                 acc (conj results result)]
+                             (if (and error
+                                      (not check-all?))
+                               (reduced acc)
+                               acc)))
+                         [] validators)]
+     (if (every? true? results)
+       :valid
+       (->> results (remove true?) vec)))))
+
 (defn csv->vec [csv]
   (when (value? csv)
     (->> (s/split csv #",| ")

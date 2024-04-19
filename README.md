@@ -129,6 +129,54 @@ gzip / gunzip edn:
 {:a 42, :b 28, :c [{:z #{:b 42 :a}}]}
 ```
 
+validation:
+
+```clojure
+=> (defn purrs? [cat]
+     (or (= (:purrs cat) true)
+         {:error "cat doesn't purr"}))
+
+=> (defn says-meow? [cat]
+     (or (= (:says cat) "meow")
+         {:error "cat doesn't say meow"}))
+
+=> (defn one-tail? [cat]
+     (or (= (:tail cat) 1)
+         {:error "cat doesn't have 1 tail"}))
+
+=> (defn four-legs? [cat]
+     (or (= (:legs cat) 4)
+         {:error "cat doesn't have 4 legs"}))
+```
+
+```clojure
+=> (y/validate [purrs?
+                says-meow?
+                one-tail?
+                four-legs?]
+              {:legs 3 :tail 3 :says "bow" :purrs true})
+
+;; => [{:error "cat doesn't say meow"}
+       {:error "cat doesn't have 1 tail"}
+       {:error "cat doesn't have 4 legs"}]
+
+=> (y/validate [purrs?
+                says-meow?
+                one-tail?
+                four-legs?]
+               {:legs 3 :tail 3 :says "bow" :purrs true}
+               {:check-all? false})
+
+;; => [{:error "cat doesn't say meow"}]
+
+=> (y/validate [purrs?
+                says-meow?
+                one-tail?
+                four-legs?]
+               {:legs 4 :tail 1 :says "meow" :purrs true})
+;; => :valid
+```
+
 ### time
 
 ```clojure

@@ -4,7 +4,7 @@
   <packaging>jar</packaging>
   <groupId>tolitius</groupId>
   <artifactId>yang</artifactId>
-  <version>0.1.40</version>
+  <version>0.1.41</version>
   <name>yang</name>
   <description>the yang of Clojure's ying</description>
   <url>https://github.com/tolitius/yang</url>
