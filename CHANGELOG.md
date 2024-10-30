@@ -1,3 +1,7 @@
+# 0.1.42
+
++ [remove-keys-by-prefix](https://github.com/tolitius/yang/blob/af35279e4b13c36927572c0c5bd6d1144ee22f6c/src/yang/lang.clj#L176-L193)
+
 # 0.1.39
 
 + [rebrace](https://github.com/tolitius/yang/blob/cd8c4e94160b5e0e375a49b0dd0cb881015ddb41/src/yang/lang.clj#L208)
