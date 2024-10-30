@@ -173,6 +173,25 @@
     1
     n))
 
+(defn remove-keys-by-prefix
+  "removes map entries by a key prefix
+
+   => (def m {:a 42 :foo.bar/zoo 39 :moo 82 :oop.oop/noop :noop})
+
+   => (y/remove-keys-by-prefix m :a)
+      {:foo.bar/zoo 39, :moo 82, :oop.oop/noop :noop}
+
+   => (y/remove-keys-by-prefix m :foo)
+      {:a 42, :moo 82, :oop.oop/noop :noop}"
+  [m prefix]
+  (if-not (and prefix m)
+    m
+    (->> m
+         (remove (fn [[k v]]
+                   (s/starts-with? (str k)
+                                   (str prefix))))
+         (into {}))))
+
 (defn remove-key-ns
   ([m]
    (fmk m name))
