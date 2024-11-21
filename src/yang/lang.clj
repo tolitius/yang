@@ -15,18 +15,20 @@
 (defonce zero-uuid (UUID. 0 0))
 
 (defn suuid? [s]
-  (try (UUID/fromString s)
+  (try (parse-uuid s)
        true
        (catch Exception e)))
 
-(defn uuid []
-  (UUID/randomUUID))
+(defn uuid
+  "DEPRECATED: use clojure.core/random-uuid"
+  []
+  (random-uuid))
 
 (defn squuid
   "tasty sequential UUIDs
    from: https://github.com/clojure-cookbook/clojure-cookbook/blob/1b3754a7f4aab51cc9b254ea102870e7ce478aa0/01_primitive-data/1-24_uuids.asciidoc"
   []
-  (let [uuid      (UUID/randomUUID)
+  (let [uuid      (random-uuid)
         time      (System/currentTimeMillis)
         secs      (quot time 1000)
         lsb       (.getLeastSignificantBits uuid)
@@ -35,23 +37,22 @@
                           (bit-and 0x00000000ffffffff msb))]
     (java.util.UUID. timed-msb lsb)))
 
-(defn str->uuid [s]
-  (when (seq s)
-    (UUID/fromString s)))
+(defn str->uuid
+  "DEPRECATED: use clojure.core/parse-uuid"
+  [s]
+  (parse-uuid s))
 
 (defn fmv
-  "apply f to each value v of map m"
+  "DEPRECATED: use clojure.core/update-vals
+  apply f to each value v of map m"
   [m f]
-  (into {}
-        (for [[k v] m]
-          [k (f v)])))
+  (update-vals m f))
 
 (defn fmk
-  "apply f to each key k of map m"
+  "DEPRECATED: use clojure.core/update-keys
+  apply f to each key k of map m"
   [m f]
-  (into {}
-        (for [[k v] m]
-          [(f k) v])))
+  (update-keys m f))
 
 (defn rfmk
   "recursively apply f to each key k of map m"
@@ -133,12 +134,16 @@
   (if (number? n)
     (double n)))
 
-(defn parse-long [l]
-  (try (Long/valueOf l)
+(defn parse-long
+  "DEPRECATED: use clojure.core/parse-long"
+  [l]
+  (try (clojure.core/parse-long l)
        (catch Exception e)))
 
-(defn parse-double [d]
-  (try (Double/valueOf d)
+(defn parse-double
+  "DEPRECATED: use clojure.core/parse-double"
+  [d]
+  (try (clojure.core/parse-double d)
        (catch Exception e)))
 
 (defn parse-number [n]
@@ -194,7 +199,7 @@
 
 (defn remove-key-ns
   ([m]
-   (fmk m name))
+   (update-keys m name))
   ([m kns]
    (->> (filter (fn [[k v]] (not= (namespace k)
                                   (name kns))) m)
@@ -377,8 +382,8 @@
        :b {:one :b-one, :two :b-two}}"
   [m]
   (-> (group-by (comp namespace key) m)
-      (fmk keyword)
-      (fmv #(fmk % (comp keyword name)))))
+      (update-keys keyword)
+      (update-vals #(update-keys % (comp keyword name)))))
 
 (defn group-by-first
   "takes a seq of 2 element tuples
