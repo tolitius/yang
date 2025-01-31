@@ -1,3 +1,23 @@
+# 0.1.43
+
++ add [assoc-if](https://github.com/tolitius/yang/blob/6b6ceca0bbf427b890174f31f680c726799d7f62/src/yang/lang.clj#L70-L100)
+
+```clojure
+=> (require '[yang.lang :as y])
+=> (def m {:moo 42})
+
+=> (y/assoc-if m :zoo 12)
+{:moo 42, :zoo 12}
+
+;; nil is not a value: hence skipped
+=> (y/assoc-if m :zoo 12 :moo nil)
+{:moo 42, :zoo 12}
+
+;; false is a value: hence not skipped
+=> (y/assoc-if m :zoo 12 :moo nil :boo false)
+{:moo 42, :zoo 12, :boo false}
+```
+
 # 0.1.42
 
 + [remove-keys-by-prefix](https://github.com/tolitius/yang/blob/af35279e4b13c36927572c0c5bd6d1144ee22f6c/src/yang/lang.clj#L176-L193)

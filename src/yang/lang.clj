@@ -67,6 +67,38 @@
                              (map fun x)) x))
                    m)))
 
+(defn assoc-if
+    "associates key/value pairs into the map `m` if the values are not nil
+     if a value is nil, the corresponding key is not added to the map
+
+     args:
+       m:   the initial map
+       kvs: a sequence of alternating keys and values (e.g., :k1 v1 :k2 v2)
+
+     returns:
+       a new map with the key/value pairs added, excluding pairs where the value is nil
+
+     example:
+       => (def m {:moo 42})
+
+       => (assoc-if m :zoo 12)
+       {:moo 42, :zoo 12}
+
+       ;; nil is not a value: hence skipped
+       => (assoc-if m :zoo 12 :moo nil)
+       {:moo 42, :zoo 12}
+
+       ;; false is a value: hence not skipped
+       => (assoc-if m :zoo 12 :moo nil :boo false)
+       {:moo 42, :zoo 12, :boo false}"
+  [m & kvs]
+  (reduce (fn [acc [k v]]
+            (if (some? v)
+              (assoc acc k v)
+              acc))
+          m
+          (partition 2 kvs)))
+
 (defn filter-kv
   "Takes a map, filters on (f k v) for each map entry, returns a map."
   [m f]
