@@ -1,6 +1,6 @@
 # 0.1.43
 
-+ add [assoc-if](https://github.com/tolitius/yang/blob/6b6ceca0bbf427b890174f31f680c726799d7f62/src/yang/lang.clj#L70-L100)
++ add [assoc-if](https://github.com/tolitius/yang/blob/b9ffbfec3261e08e867501870f4345b7faf2fb5a/src/yang/lang.clj#L70-L100)
 
 ```clojure
 => (require '[yang.lang :as y])
