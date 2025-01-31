@@ -9,8 +9,7 @@
            [java.io ByteArrayOutputStream ByteArrayInputStream Reader]
            [java.util.zip GZIPOutputStream GZIPInputStream]
            [java.util.concurrent Future CompletableFuture]
-           [java.util.function Supplier Function]
-           [clojure.lang Reflector]))
+           [java.util.function Supplier Function]))
 
 (defonce zero-uuid (UUID. 0 0))
 
@@ -686,26 +685,3 @@
                   frames)]))
     (into {})
     pp/pprint))
-
-;; reflection
-
-(defn static-method [clazz method params]
-  (Reflector/invokeStaticMethod clazz method (into-array params)))
-
-(defn instance-method
-  ([obj method-name]
-   (Reflector/invokeInstanceMember obj method-name))
-  ([obj method-name args]
-   (Reflector/invokeInstanceMethod obj method-name (into-array args))))
-
-(defn private-method [obj method & args]
-  (let [m (->> (.. obj getClass getDeclaredMethods)
-               (filter #(.. % getName (equals method)))
-               first)]
-    (. m (setAccessible true))
-    (. m (invoke obj args))))
-
-(defn private-field [obj field]
-  (let [f (.. obj getClass (getDeclaredField field))]
-    (. f (setAccessible true))
-    (. f (get obj))))

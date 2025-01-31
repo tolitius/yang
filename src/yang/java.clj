@@ -2,7 +2,8 @@
   ; (:require [yang.lang :as l])      ;; AOT'ed as well hence blows up the jar size. so hold off for now
   (:import [clojure.lang Keyword IFn]
            [java.util Map]
-           [java.util.function Function BiFunction Consumer BiConsumer]))
+           [java.util.function Function BiFunction Consumer BiConsumer]
+           [clojure.lang Reflector]))
 
 (gen-class
   :name tolitius.Yang
@@ -53,3 +54,27 @@
 
 ; (defn -fmv [m f]
 ;   (l/fmv m f))
+
+
+;; reflection
+
+(defn static-method [clazz method params]
+  (Reflector/invokeStaticMethod clazz method (into-array params)))
+
+(defn instance-method
+  ([obj method-name]
+   (Reflector/invokeInstanceMember obj method-name))
+  ([obj method-name args]
+   (Reflector/invokeInstanceMethod obj method-name (into-array args))))
+
+(defn private-method [obj method & args]
+  (let [m (->> (.. obj getClass getDeclaredMethods)
+               (filter #(.. % getName (equals method)))
+               first)]
+    (. m (setAccessible true))
+    (. m (invoke obj args))))
+
+(defn private-field [obj field]
+  (let [f (.. obj getClass (getDeclaredField field))]
+    (. f (setAccessible true))
+    (. f (get obj))))
