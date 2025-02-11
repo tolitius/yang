@@ -80,6 +80,17 @@
               :else           (f x)))]
     (update-vals m walk)))
 
+(defn rfmv
+  "recursively apply f to each value v of map m"
+  [m f]
+  (let [fun (fn [[k v]]
+              [k (f v)])]
+    (walk/postwalk (fn [x]
+                     (if (map? x)
+                       (into {}
+                             (map fun x)) x))
+                   m)))
+
 (defn assoc-if
     "associates key/value pairs into the map `m` if the values are not nil
      if a value is nil, the corresponding key is not added to the map
