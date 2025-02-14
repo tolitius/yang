@@ -552,6 +552,57 @@
                 a))
             [] xs1)))
 
+(defn remove-missing-paths
+  "given two maps, removes paths from the second map that are not in the first 'source' map.
+   returns {:kept <the second map with paths that exist in the first map>
+            :removed <vector of paths that were removed from the second map>}
+
+   => (def m {:a 42 :m {:b 28 :c {:z 32} :d nil :w 34}})
+   => (def s {:a 42 :m {:f 28 :c {:z 32 :g 12} :d 12 :z 21 :v 14} :k 18})
+
+   => (remove-missing-paths m s)
+      {:kept {:a 42, :m {:c {:z 32}, :d 12}},
+       :removed ([:k] [:m :f] [:m :v] [:m :z] [:m :c :g])}"
+
+  ([source to-match]
+   (let [[kept removed] (remove-missing-paths source to-match [] [])]
+     {:kept kept
+      :removed (sort-by (fn [path]
+                          [(count path)
+                           (str path)])
+                        removed)}))
+
+  ([source to-match path removed]
+   (reduce-kv
+     (fn [[kept-map removed-keys] k v]
+       (if (contains? source k)
+         (let [source-v (get source k)]
+           (cond
+
+             ;; both are maps? => go in
+             (and (map? source-v)
+                  (map? v))          (let [[nested-kept nested-removed]
+                                           (remove-missing-paths source-v
+                                                                 v
+                                                                 (conj path k)
+                                                                 removed-keys)]
+                                       [(assoc kept-map k nested-kept)
+                                        nested-removed])
+
+             ;; source is not a map but "match" is? => remove it
+             (map? v)                [kept-map (into removed-keys
+                                                     (map #(into path [k %])
+                                                          (keys v)))]
+
+             ;; neither is a map => it's a keeper
+             :else                   [(assoc kept-map k v)
+                                      removed-keys]))
+
+         ;; key (path) doesn't exist in a source map => remove it
+         [kept-map (conj removed-keys (conj path k))]))
+     [{} removed]
+     to-match)))
+
 (defn validate
   "
   takes in a sequence of validator functions and a fact to validate

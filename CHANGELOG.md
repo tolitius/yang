@@ -1,3 +1,16 @@
+# 0.1.46
+
+add "`remove-missing-paths`":
+
+```clojure
+=> (def m {:a 42 :m {:b 28 :c {:z 32} :d nil :w 34}})
+=> (def s {:a 42 :m {:f 28 :c {:z 32 :g 12} :d 12 :z 21 :v 14} :k 18})
+
+=> (remove-missing-paths m s)
+   {:kept {:a 42, :m {:c {:z 32}, :d 12}},
+    :removed ([:k] [:m :f] [:m :v] [:m :z] [:m :c :g])}"
+```
+
 # 0.1.44
 
 moved reflection to the `yang.java` namespace
