@@ -720,7 +720,12 @@
       io/resource
       slurp))
 
-(defn swallow [f & args]
+(defn swallow
+  "Will wrap and swallow any exception thrown by the given function.
+
+   (swallow (fn [] (throw (Exception. \"oops\"))))
+   => nil"
+  [f & args]
   (try (apply f args) (catch Exception _)))
 
 (defn strip-margin
