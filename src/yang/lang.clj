@@ -720,9 +720,8 @@
       io/resource
       slurp))
 
-(defn edn-resource [path]
-  (-> (slurp-resource path)
-      edn/read-string))
+(defn swallow [f & args]
+  (try (apply f args) (catch Exception _)))
 
 (defn strip-margin
   ([string]
