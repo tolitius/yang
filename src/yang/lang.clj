@@ -720,6 +720,10 @@
       io/resource
       slurp))
 
+(defn edn-resource [path]
+  (-> (slurp-resource path)
+      edn/read-string))
+
 (defn swallow
   "Will wrap and swallow any exception thrown by the given function.
 
