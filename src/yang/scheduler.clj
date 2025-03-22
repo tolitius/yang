@@ -52,12 +52,40 @@
     (.cancel f true)))
 
 (defn every
+  "schedules a function to run every \"interval\"
+   returns a map with the scheduled task and visibility info
+   opts: {:time-unit TimeUnit, :task-name String}
+         defaults to MILLISECONDS and 'funtask'."
   ([interval fun]
-   (every interval fun TimeUnit/MILLISECONDS))
-  ([interval fun time-unit]
-   (let [f #(try (fun) (catch Exception e (elog e)))]
-    (.scheduleAtFixedRate (Executors/newScheduledThreadPool 1)
-      f 0 interval time-unit))))
+   (every interval fun {}))
+  ([interval fun {:keys [time-unit task-name]
+                  :or {time-unit TimeUnit/MILLISECONDS
+                       task-name "funtask"}}]
+   (let [executor (Executors/newScheduledThreadPool 1)
+         started-at (Instant/now)
+         f #(try
+              (fun)
+              (catch Exception e
+                (println (str "problem running a scheduled task (\"" task-name "\") due to:") e)))
+         scheduled (.scheduleAtFixedRate executor
+                                         f
+                                         0
+                                         interval
+                                         time-unit)]
+     {:scheduled scheduled
+      :fun fun
+      :cancel (fn [] (.cancel scheduled false))
+      :intel {:task-name task-name
+              :interval interval
+              :time-unit time-unit
+              :started-at started-at
+              :cancelled? (fn [] (.isCancelled scheduled))
+              :done? (fn [] (.isDone scheduled))
+              :running? (fn [] (and (not (.isCancelled scheduled)) (not (.isDone scheduled))))
+              :next-run (fn [] (when-not (.isCancelled scheduled)
+                                 (let [delay (.getDelay scheduled TimeUnit/MILLISECONDS)]
+                                   (.plusMillis (Instant/now) delay))))}})))
+
 
 (defn ftimes [n f]
   (future
