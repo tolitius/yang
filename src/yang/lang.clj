@@ -39,42 +39,46 @@
     (UUID/fromString s)))
 
 (defn fmv
-  "apply f to each value v of map m"
+  "DEPRECATED: Use clojure.core/update-vals instead.
+   apply f to each value v of map m"
+  {:added      "0.1.0"
+   :deprecated "0.1.51"}
   [m f]
-  (into {}
-        (for [[k v] m]
-          [k (f v)])))
+  (update-vals m f))
 
 (defn fmk
-  "apply f to each key k of map m"
+  "DEPRECATED: Use clojure.core/update-keys instead.
+   apply f to each key k of map m"
+  {:added      "0.1.0"
+   :deprecated "0.1.51"}
   [m f]
-  (into {}
-        (for [[k v] m]
-          [(f k) v])))
+  (update-keys m f))
 
 (defn rfmk
   "recursively apply f to each key k of map m"
+  {:added "0.1.26"}
   [m f]
-  (let [fun (fn [[k v]]
-              (if (or (string? k)
-                      (simple-keyword? k))
-                [(f k) v]
-                [k v]))]
-    (walk/postwalk (fn [x]
-                     (if (map? x)
-                       (into {}
-                             (map fun x)) x))
-                   m)))
+  (letfn [(walk [x]
+            (cond
+              (map? x)        (update-keys (update-vals x walk) f)
+              (vector? x)     (mapv walk x)
+              (set? x)        (into #{} (map walk) x)
+              (sequential? x) (map walk x)
+              :else           x))]
+    (update-keys (update-vals m walk) f)))
 
 (defn rfmv
   "recursively apply f to each value v of map m"
+  {:added "0.1.45"}
   [m f]
-  (into {}
-        (map (fn [[k v]]
-               [k (if (map? v)
-                    (rfmv v f)
-                    (f v))]))
-        m))
+  (letfn [(walk [x]
+            (cond
+              (map? x)        (update-vals x walk)
+              (vector? x)     (mapv walk x)
+              (set? x)        (into #{} (map walk) x)
+              (sequential? x) (map walk x)
+              :else           (f x)))]
+    (update-vals m walk)))
 
 (defn assoc-if
     "associates key/value pairs into the map `m` if the values are not nil
