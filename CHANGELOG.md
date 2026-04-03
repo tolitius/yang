@@ -1,3 +1,44 @@
+# 0.1.51
+
+### 2026-04-03
+
+**Bug Fix**: `rfmk` and `rfmv` functions
+
+Fixed bug where `rfmk` and `rfmv` could not handle vectors, sets, or sequences at the top level.
+
+**Error (before fix):**
+```
+IllegalArgumentException: No implementation of method: :alter-name of protocol: 
+#'camel-snake-kebab.internals.alter-name/AlterName found for class: java.lang.Integer
+```
+
+**Root cause:** The functions called `update-keys`/`update-vals` directly on the input parameter,
+assuming it was always a map. When a vector was passed, `update-keys` treated vector indices 
+(integers 0, 1, 2...) as keys and tried to transform them with the provided function.
+
+**Fix:** Changed both functions to use their internal `walk` helper for the top-level input,
+which correctly handles all data structures (maps, vectors, sets, sequences).
+
+**Example:**
+
+Before:
+```clojure
+(rfmk [{:isPrimary true}] ->kebab-case)
+;; => IllegalArgumentException: No implementation of AlterName for class: java.lang.Integer
+```
+
+After:
+```clojure
+(rfmk [{:isPrimary true}] ->kebab-case)
+;; => [{:is-primary true}]
+```
+
+**Changes:**
+- `rfmk`: Changed from `(update-keys (update-vals m walk) f)` to `(walk m)`
+- `rfmv`: Changed from `(update-vals m walk)` to `(walk m)`
+
+**Breaking changes:** None. Existing code continues to work. This fix only makes previously-broken functionality work correctly.
+
 # 0.1.50
 
 ### 2025-03-22
