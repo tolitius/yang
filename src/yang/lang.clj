@@ -55,8 +55,9 @@
   (update-keys m f))
 
 (defn rfmk
-  "recursively apply f to each key k of map m"
-  {:added "0.1.26"}
+  "recursively apply f to each key k of data structure m"
+  {:added "0.1.26"
+   :updated "0.1.51"}
   [m f]
   (letfn [(walk [x]
             (cond
@@ -65,11 +66,12 @@
               (set? x)        (into #{} (map walk) x)
               (sequential? x) (map walk x)
               :else           x))]
-    (update-keys (update-vals m walk) f)))
+    (walk m)))
 
 (defn rfmv
-  "recursively apply f to each value v of map m"
-  {:added "0.1.45"}
+  "recursively apply f to each value v of data structure m"
+  {:added "0.1.45"
+   :updated "0.1.51"}
   [m f]
   (letfn [(walk [x]
             (cond
@@ -78,18 +80,7 @@
               (set? x)        (into #{} (map walk) x)
               (sequential? x) (map walk x)
               :else           (f x)))]
-    (update-vals m walk)))
-
-(defn rfmv
-  "recursively apply f to each value v of map m"
-  [m f]
-  (let [fun (fn [[k v]]
-              [k (f v)])]
-    (walk/postwalk (fn [x]
-                     (if (map? x)
-                       (into {}
-                             (map fun x)) x))
-                   m)))
+    (walk m)))
 
 (defn assoc-if
     "associates key/value pairs into the map `m` if the values are not nil
