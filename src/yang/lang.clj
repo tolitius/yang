@@ -39,32 +39,46 @@
     (UUID/fromString s)))
 
 (defn fmv
-  "apply f to each value v of map m"
+  "DEPRECATED: Use clojure.core/update-vals instead.
+   apply f to each value v of map m"
+  {:added      "0.1.0"
+   :deprecated "0.1.51"}
   [m f]
-  (into {}
-        (for [[k v] m]
-          [k (f v)])))
+  (update-vals m f))
 
 (defn fmk
-  "apply f to each key k of map m"
+  "DEPRECATED: Use clojure.core/update-keys instead.
+   apply f to each key k of map m"
+  {:added      "0.1.0"
+   :deprecated "0.1.51"}
   [m f]
-  (into {}
-        (for [[k v] m]
-          [(f k) v])))
+  (update-keys m f))
 
 (defn rfmk
   "recursively apply f to each key k of map m"
+  {:added "0.1.26"}
   [m f]
-  (let [fun (fn [[k v]]
-              (if (or (string? k)
-                      (simple-keyword? k))
-                [(f k) v]
-                [k v]))]
-    (walk/postwalk (fn [x]
-                     (if (map? x)
-                       (into {}
-                             (map fun x)) x))
-                   m)))
+  (letfn [(walk [x]
+            (cond
+              (map? x)        (update-keys (update-vals x walk) f)
+              (vector? x)     (mapv walk x)
+              (set? x)        (into #{} (map walk) x)
+              (sequential? x) (map walk x)
+              :else           x))]
+    (update-keys (update-vals m walk) f)))
+
+(defn rfmv
+  "recursively apply f to each value v of map m"
+  {:added "0.1.45"}
+  [m f]
+  (letfn [(walk [x]
+            (cond
+              (map? x)        (update-vals x walk)
+              (vector? x)     (mapv walk x)
+              (set? x)        (into #{} (map walk) x)
+              (sequential? x) (map walk x)
+              :else           (f x)))]
+    (update-vals m walk)))
 
 (defn rfmv
   "recursively apply f to each value v of map m"
@@ -552,6 +566,57 @@
                 a))
             [] xs1)))
 
+(defn remove-missing-paths
+  "given two maps, removes paths from the second map that are not in the first 'source' map.
+   returns {:kept <the second map with paths that exist in the first map>
+            :removed <vector of paths that were removed from the second map>}
+
+   => (def m {:a 42 :m {:b 28 :c {:z 32} :d nil :w 34}})
+   => (def s {:a 42 :m {:f 28 :c {:z 32 :g 12} :d 12 :z 21 :v 14} :k 18})
+
+   => (remove-missing-paths m s)
+      {:kept {:a 42, :m {:c {:z 32}, :d 12}},
+       :removed ([:k] [:m :f] [:m :v] [:m :z] [:m :c :g])}"
+
+  ([source to-match]
+   (let [[kept removed] (remove-missing-paths source to-match [] [])]
+     {:kept kept
+      :removed (sort-by (fn [path]
+                          [(count path)
+                           (str path)])
+                        removed)}))
+
+  ([source to-match path removed]
+   (reduce-kv
+     (fn [[kept-map removed-keys] k v]
+       (if (contains? source k)
+         (let [source-v (get source k)]
+           (cond
+
+             ;; both are maps? => go in
+             (and (map? source-v)
+                  (map? v))          (let [[nested-kept nested-removed]
+                                           (remove-missing-paths source-v
+                                                                 v
+                                                                 (conj path k)
+                                                                 removed-keys)]
+                                       [(assoc kept-map k nested-kept)
+                                        nested-removed])
+
+             ;; source is not a map but "match" is? => remove it
+             (map? v)                [kept-map (into removed-keys
+                                                     (map #(into path [k %])
+                                                          (keys v)))]
+
+             ;; neither is a map => it's a keeper
+             :else                   [(assoc kept-map k v)
+                                      removed-keys]))
+
+         ;; key (path) doesn't exist in a source map => remove it
+         [kept-map (conj removed-keys (conj path k))]))
+     [{} removed]
+     to-match)))
+
 (defn validate
   "
   takes in a sequence of validator functions and a fact to validate
@@ -673,6 +738,14 @@
 (defn edn-resource [path]
   (-> (slurp-resource path)
       edn/read-string))
+
+(defn swallow
+  "Will wrap and swallow any exception thrown by the given function.
+
+   (swallow (fn [] (throw (Exception. \"oops\"))))
+   => nil"
+  [f & args]
+  (try (apply f args) (catch Exception _)))
 
 (defn strip-margin
   ([string]

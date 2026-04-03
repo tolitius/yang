@@ -1,3 +1,57 @@
+# 0.1.50
+
+### 2025-03-22
+
+update "`yang.scheduler`"
+
+`every` function now:
+
+* returns a map with the scheduled task, functions and visibility info
+* takes an optional "`task-name`"
+
+```clojure
+(def s (every 1000
+              #(println "scanning asteroids")))  ;; default: "funtask", milliseconds
+(:intel s)                                       ;; => {:task-name "funtask"
+                                                 ;;     :interval 1000
+                                                 ;;     :time-unit :MILLISECONDS
+                                                 ;;     :started-at [java.time.Instant "2025-03-22T12:34:56Z"]
+                                                 ;;     :cancelled? #function[...]
+                                                 ;;     :done? #function[...]
+                                                 ;;     :running? #function[...]
+                                                 ;;     :next-run #function[...]}
+
+(def s2 (every 2
+               #(println "Beep from Mars")
+               {:task-name "rover-ping"
+                :time-unit TimeUnit/SECONDS}))
+(:interval (:intel s2))                          ;; => 2
+((:next-run (:intel s2)))                        ;; => [java.time.Instant "2025-03-22T18:34:49.365088Z"]
+
+(def s3 (every 1000
+               #(throw (RuntimeException. "no oxygen!"))
+               {:task-name "life-support"}))
+;; prints: "problem running a scheduled task (\"life-support\") due to: java.lang.RuntimeException: no oxygen!"
+;; but does not stop running
+```
+
+# 0.1.48
+
+[add](https://github.com/tolitius/yang/pull/13) "`swallow`"
+
+# 0.1.46
+
+add "`remove-missing-paths`":
+
+```clojure
+=> (def m {:a 42 :m {:b 28 :c {:z 32} :d nil :w 34}})
+=> (def s {:a 42 :m {:f 28 :c {:z 32 :g 12} :d 12 :z 21 :v 14} :k 18})
+
+=> (remove-missing-paths m s)
+   {:kept {:a 42, :m {:c {:z 32}, :d 12}},
+    :removed ([:k] [:m :f] [:m :v] [:m :z] [:m :c :g])}"
+```
+
 # 0.1.44
 
 moved reflection to the `yang.java` namespace
