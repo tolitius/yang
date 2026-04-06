@@ -1,1 +1,0 @@
-["^ ","~:members",["^ ","<init>",["~#set",[["^ ","~:flags",["^2",["~:method","~:public"]]]]],"findNameForIsGetter",["^2",[["^ ","^3",["^2",["^4","^5"]]]]],"findNameForRegularGetter",["^2",[["^ ","^3",["^2",["^4","^5"]]]]],"findNameForMutator",["^2",[["^ ","^3",["^2",["^4","^5"]]]]],"modifyFieldName",["^2",[["^ ","^3",["^2",["^4","^5"]]]]]]]

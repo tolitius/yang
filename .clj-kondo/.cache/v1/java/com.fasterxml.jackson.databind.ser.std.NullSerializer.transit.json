@@ -1,1 +1,0 @@
-["^ ","~:members",["^ ","instance",["~#set",[["^ ","~:flags",["^2",["~:public","~:static","~:field","~:final"]]]]],"serialize",["^2",[["^ ","^3",["^2",["~:method","^4"]]]]],"serializeWithType",["^2",[["^ ","^3",["^2",["^9","^4"]]]]],"getSchema",["^2",[["^ ","^3",["^2",["^9","^4"]]]]],"acceptJsonFormatVisitor",["^2",[["^ ","^3",["^2",["^9","^4"]]]]]]]
