@@ -1,0 +1,1 @@
+["^ ","~:members",["^ ","bufferedSize",["~#set",[["^ ","~:flags",["^2",["~:method","~:public"]]]]],"resetAndStart",["^2",[["^ ","^3",["^2",["^4","^5"]]]]],"appendCompletedChunk",["^2",[["^ ","^3",["^2",["^4","^5","~:final"]]]]],"completeAndClearBuffer",["^2",[["^ ","^3",["^2",["^4","^5"]]]]]]]
