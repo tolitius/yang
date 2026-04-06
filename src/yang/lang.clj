@@ -57,7 +57,7 @@
 (defn rfmk
   "recursively apply f to each key k of data structure m"
   {:added "0.1.26"
-   :updated "0.1.51"}
+   :updated "0.1.52"}
   [m f]
   (letfn [(walk [x]
             (cond
@@ -71,7 +71,7 @@
 (defn rfmv
   "recursively apply f to each value v of data structure m"
   {:added "0.1.45"
-   :updated "0.1.51"}
+   :updated "0.1.52"}
   [m f]
   (letfn [(walk [x]
             (cond
