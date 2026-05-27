@@ -189,7 +189,8 @@
        (catch Exception e)))
 
 (defn parse-number [n]
-  (let [s (str n)]
+  (let [s (-> (str n)
+              (s/replace "," ""))]
     (if (re-find #"^-?\d+\.?\d*$" s)
       (edn/read-string s))))
 
