@@ -189,10 +189,9 @@
        (catch Exception e)))
 
 (defn parse-number [n]
-  (let [s (-> (str n)
-              (s/replace "," ""))]
-    (if (re-find #"^-?\d+\.?\d*$" s)
-      (edn/read-string s))))
+  (let [s (str n)]
+    (when (re-matches #"^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$" s)
+      (edn/read-string (s/replace s "," "")))))
 
 (defn ranged-rand [start end]
   (+ start (long (rand (- end start)))))
