@@ -135,36 +135,43 @@
       (is (= -999999999999999 (y/parse-number "-999999999999999")))
       (is (= -1.234567891234567 (y/parse-number "-1.234567891234567")))))
 
-  (deftest should-parse-strict-numbers
-    (testing "should parse with explicit base detection"
-      (are [input expected] (= expected (y/parse-number-strict input))
-                            ;; decimal integers
+  (deftest should-parse-decimal-numbers
+    (testing "should parse as decimal (base-10) ignoring octal/hex semantics"
+      (are [input expected] (= expected (y/parse-number-literal input))
+                            ;; decimal integers with leading zeros
+                            "045" 45           ; decimal 45, NOT octal 37
+                            "007" 7
+                            "-012" -12
+                            "0011" 11
+                            "-0012" -12
+                            "0000" 0
+                            "-0000" 0
+                            
+                            ;; regular decimals
                             "42" 42
                             "-10" -10
                             "1,234" 1234
+                            "1,234,567" 1234567
                             
-                            ;; octal (leading zero)
-                            "045" 37           ; octal 045 = decimal 37
-                            "007" 7
-                            "-012" -10
-                            
-                            ;; hex
-                            "0x2A" 42
-                            "0xFF" 255
-                            "-0x10" -16
-                            
-                            ;; decimals
-                            "42.5" 42.5
-                            "0.5" 0.5
-                            "-1.23" -1.23
+                            ;; decimal floats with leading zeros
+                            "00.5" 0.5
+                            "-001.23" -1.23
+                            "-0012.5" -12.5
+                            "0.0" 0.0
+                            "42.42" 42.42
                             "1,234.56" 1234.56))
     
-    (testing "should reject invalid formats in strict mode"
-      (are [input] (nil? (y/parse-number-strict input))
+    (testing "should reject hex prefixes and invalid formats"
+      (are [input] (nil? (y/parse-number-literal input))
+                   "0x2A"         ; hex rejected
+                   "0xFF"
+                   "-0x10"
                    ""
                    "abc"
                    "1,23"
-                   ".5")))
+                   ".5"
+                   "0-12"
+                   "-0-12")))
 
  (deftest should-handle-boundary-cases
    (testing "should handle Long/MIN_VALUE and Long/MAX_VALUE"
