@@ -191,7 +191,16 @@
 (defn parse-number [n]
   (let [s (str n)]
     (when (re-matches #"^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$" s)
-      (edn/read-string (s/replace s "," "")))))
+      (let [s (s/replace s "," "")
+            neg? (s/starts-with? s "-")
+            s (if neg? (subs s 1) s)
+            [int-part frac-part] (s/split s #"\." 2)
+            int-part (let [trimmed (s/replace int-part #"^0+" "")]
+                       (if (s/blank? trimmed) "0" trimmed))
+            normalized (if frac-part
+                         (str (when neg? "-") int-part "." frac-part)
+                         (str (when neg? "-") int-part))]
+        (edn/read-string normalized)))))
 
 (defn ranged-rand [start end]
   (+ start (long (rand (- end start)))))
