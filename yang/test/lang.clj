@@ -2,48 +2,44 @@
    (:require [clojure.test :refer [deftest testing is are]]
              [yang.lang :as y]))
 
- (deftest should-parse-valid-numbers
-   (testing "should parse integers"
-     (are [input expected] (= expected (y/parse-number input))
-                           "0" 0
-                           "1" 1
-                           "42" 42
-                           "123456789" 123456789
-                           "-1" -1
-                           "-42" -42
-                           "-999" -999
-                           "0011" 11
-                           "-0012" -12
-                           "0000" 0
-                           "-0000" 0))
+  (deftest should-parse-valid-numbers
+    (testing "should parse integers (EDN rules, leading zeros = octal)"
+      (are [input expected] (= expected (y/parse-number input))
+                            "0" 0
+                            "1" 1
+                            "42" 42
+                            "123456789" 123456789
+                            "-1" -1
+                            "-42" -42
+                            "-999" -999
+                            "045" 37           ; octal 045 = decimal 37
+                            "007" 7            ; octal 007 = decimal 7
+                            "-012" -10))       ; octal -012 = decimal -10
 
-   (testing "should parse decimals"
-     (are [input expected] (= expected (y/parse-number input))
-                           "0.0" 0.0
-                           "1.5" 1.5
-                           "42.42" 42.42
-                           "3.14159" 3.14159
-                           "0.1" 0.1
-                           "123.456" 123.456
-                           "-1.5" -1.5
-                           "-42.999" -42.999
-                           "-0.5" -0.5
-                           "00.5" 0.5
-                           "-001.23" -1.23
-                           "-0012.5" -12.5
-                           "1,234" 1234
-                           "1,234,567" 1234567
-                           "1,234.56" 1234.56
-                           "-1,234.56" -1234.56))
+    (testing "should parse decimals"
+      (are [input expected] (= expected (y/parse-number input))
+                            "0.0" 0.0
+                            "1.5" 1.5
+                            "42.42" 42.42
+                            "3.14159" 3.14159
+                            "0.1" 0.1
+                            "123.456" 123.456
+                            "-1.5" -1.5
+                            "-42.999" -42.999
+                            "-0.5" -0.5
+                            "1,234" 1234
+                            "1,234,567" 1234567
+                            "1,234.56" 1234.56
+                            "-1,234.56" -1234.56))
 
-   (testing "should parse numbers from various input types"
-     (are [input expected] (= expected (y/parse-number input))
-                           42 42
-                           42.5 42.5
-                           -10 -10
-                           -3.14 -3.14
-                           0 0
-                           0.0 0.0)))
+    (testing "should parse numbers from various input types"
+      (are [input expected] (= expected (y/parse-number input))
+                            42 42
+                            42.5 42.5
+                            -10 -10
+                            -3.14 -3.14
+                            0 0
+                            0.0 0.0)))
 
  (deftest should-reject-invalid-numbers
    (testing "should return nil for invalid formats"
@@ -123,28 +119,52 @@
                   "12,34"
                   "42:00")))
 
- (deftest should-handle-edge-cases
-   (testing "should handle edge cases properly"
-     (is (= 0 (y/parse-number "0")))
-     (is (= 0.0 (y/parse-number "0.0")))
-     (is (= 0.0 (y/parse-number "-0.0")))
-     (is (= 0 (y/parse-number 0)))
-     (is (= 0.0 (y/parse-number 0.0)))
+  (deftest should-handle-edge-cases
+    (testing "should handle edge cases properly"
+      (is (= 0 (y/parse-number "0")))
+      (is (= 0.0 (y/parse-number "0.0")))
+      (is (= 0.0 (y/parse-number "-0.0")))
+      (is (= 0 (y/parse-number 0)))
+      (is (= 0.0 (y/parse-number 0.0)))
 
-     ;; very large numbers
-     (is (= 999999999999999 (y/parse-number "999999999999999")))
-     (is (= 1.234567891234567 (y/parse-number "1.234567891234567")))
+      ;; very large numbers
+      (is (= 999999999999999 (y/parse-number "999999999999999")))
+      (is (= 1.234567891234567 (y/parse-number "1.234567891234567")))
 
-     ;; very small numbers
-     (is (= -999999999999999 (y/parse-number "-999999999999999")))
-     (is (= -1.234567891234567 (y/parse-number "-1.234567891234567")))
+      ;; very small numbers
+      (is (= -999999999999999 (y/parse-number "-999999999999999")))
+      (is (= -1.234567891234567 (y/parse-number "-1.234567891234567")))))
 
-     ;; leading zeros are normalized
-     (is (= 42 (y/parse-number "042")))
-     (is (= 7 (y/parse-number "007")))
-     (is (= 0.5 (y/parse-number "00.5")))
-     (is (= -12 (y/parse-number "-0012")))
-     (is (= -12.5 (y/parse-number "-0012.5")))))
+  (deftest should-parse-strict-numbers
+    (testing "should parse with explicit base detection"
+      (are [input expected] (= expected (y/parse-number-strict input))
+                            ;; decimal integers
+                            "42" 42
+                            "-10" -10
+                            "1,234" 1234
+                            
+                            ;; octal (leading zero)
+                            "045" 37           ; octal 045 = decimal 37
+                            "007" 7
+                            "-012" -10
+                            
+                            ;; hex
+                            "0x2A" 42
+                            "0xFF" 255
+                            "-0x10" -16
+                            
+                            ;; decimals
+                            "42.5" 42.5
+                            "0.5" 0.5
+                            "-1.23" -1.23
+                            "1,234.56" 1234.56))
+    
+    (testing "should reject invalid formats in strict mode"
+      (are [input] (nil? (y/parse-number-strict input))
+                   ""
+                   "abc"
+                   "1,23"
+                   ".5")))
 
  (deftest should-handle-boundary-cases
    (testing "should handle Long/MIN_VALUE and Long/MAX_VALUE"

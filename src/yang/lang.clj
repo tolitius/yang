@@ -191,16 +191,44 @@
 (defn parse-number [n]
   (let [s (str n)]
     (when (re-matches #"^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$" s)
-      (let [s (s/replace s "," "")
-            neg? (s/starts-with? s "-")
-            s (if neg? (subs s 1) s)
-            [int-part frac-part] (s/split s #"\." 2)
-            int-part (let [trimmed (s/replace int-part #"^0+" "")]
-                       (if (s/blank? trimmed) "0" trimmed))
-            normalized (if frac-part
-                         (str (when neg? "-") int-part "." frac-part)
-                         (str (when neg? "-") int-part))]
-        (edn/read-string normalized)))))
+      (edn/read-string (s/replace s "," "")))))
+
+(defn parse-number-strict
+  "Parses a numeric string with explicit base/type detection:
+   - 0x/0X prefix: hexadecimal integer
+   - 0 prefix (no decimal point): octal integer
+   - decimal point: decimal float
+   - otherwise: decimal integer
+   Comma grouping is validated and stripped before parsing."
+  [n]
+  (let [s (str n)
+        neg? (s/starts-with? s "-")
+        s-abs (if neg? (subs s 1) s)]
+    (cond
+      ;; hex prefix - check before main regex
+      (re-matches #"^0[xX][0-9a-fA-F]+$" s-abs)
+      (let [hex-str (subs s-abs 2)
+            parsed (Long/parseLong hex-str 16)]
+        (if neg? (- parsed) parsed))
+      
+      ;; standard numeric format with comma grouping
+      (re-matches #"^(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$" s-abs)
+      (let [s-clean (s/replace s "," "")]
+        (cond
+          ;; has decimal point -> parse as decimal
+          (s/includes? s-clean ".")
+          (Double/valueOf s-clean)
+          
+          ;; leading zero -> octal integer
+          (and (> (count s-abs) 1) (s/starts-with? s-abs "0"))
+          (let [parsed (Long/parseLong s-abs 8)]
+            (if neg? (- parsed) parsed))
+          
+          ;; otherwise -> decimal integer
+          :else
+          (Long/valueOf s-clean)))
+      
+      :else nil)))
 
 (defn ranged-rand [start end]
   (+ start (long (rand (- end start)))))
