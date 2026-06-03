@@ -119,6 +119,7 @@
   (testing "should handle Long/MIN_VALUE and Long/MAX_VALUE"
     (is (= Long/MAX_VALUE (y/parse-number (str Long/MAX_VALUE))))
     (is (= Long/MIN_VALUE (y/parse-number (str Long/MIN_VALUE)))))
+
   (testing "should handle very small decimals"
     (is (= 0.000001 (y/parse-number "0.000001")))
     (is (= 0.123456789 (y/parse-number "0.123456789")))))
