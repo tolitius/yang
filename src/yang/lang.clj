@@ -188,37 +188,36 @@
   (try (Double/valueOf d)
        (catch Exception e)))
 
-(defn parse-number [n]
-  (let [s (str n)]
-    (when (re-matches #"^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$" s)
-      (edn/read-string (s/replace s "," "")))))
+(def ^:private number-re
+  #"^[+-]?(?:(?:0|[1-9]\d{0,2}(?:,\d{3})+|[1-9]\d*)(?:\.\d+)?|\.\d+)$")
 
-(defn parse-number-literal
-  "Parses a numeric string as decimal (base-10) only, ignoring octal/hex semantics.
-   Leading zeros are normalized and treated as decimal integers.
-   - Rejects 0x/0X hex prefixes
-   - Leading zeros: treated as decimal (e.g., '045' -> 45, not octal 37)
-   - Decimal point: parsed as Double
-   - Otherwise: parsed as Long
-   Comma grouping is validated and stripped before parsing."
-  [n]
-  (let [s (str n)]
-    (when (re-matches #"^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$" s)
-      (let [s (s/replace s "," "")
-            neg? (s/starts-with? s "-")
-            s-abs (if neg? (subs s 1) s)]
-        ;; reject hex prefixes
-        (when-not (re-matches #"^0[xX].*" s-abs)
-          (let [[int-part frac-part] (s/split s-abs #"\." 2)
-                ;; normalize leading zeros in integer part
-                int-part (let [trimmed (s/replace int-part #"^0+" "")]
-                           (if (s/blank? trimmed) "0" trimmed))
-                normalized (if frac-part
-                             (str (when neg? "-") int-part "." frac-part)
-                             (str (when neg? "-") int-part))]
-            (if frac-part
-              (Double/valueOf normalized)
-              (Long/valueOf normalized))))))))
+(defn- remove-commas [^String s]
+  (if (= -1 (.indexOf s ","))
+    s
+    (.replace s "," "")))
+
+(defn- valid-number [^String s]
+  (when (re-matches number-re s)
+    s))
+
+(defn- normalize-leading-decimal [^String s]
+  (cond
+    (s/starts-with? s ".")  (str "0" s)
+    (s/starts-with? s "-.") (str "-0" (subs s 1))
+    (s/starts-with? s "+.") (str "+0" (subs s 1))
+    :else s))
+
+(defn- parse-it [^String s]
+  (edn/read-string s))
+
+(defn parse-number [input]
+  (when (string? input)
+    (some-> input
+            s/trim
+            valid-number
+            remove-commas
+            normalize-leading-decimal
+            parse-it)))
 
 (defn ranged-rand [start end]
   (+ start (long (rand (- end start)))))
