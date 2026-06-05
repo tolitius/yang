@@ -224,22 +224,25 @@
    Accepts strings with optional sign, commas, and decimals.
    Returns nil for invalid formats or non-string inputs.
 
- Examples:
-   (parse-number \"42\")       => 42
-   (parse-number \"1,234.56\") => 1234.56
-   (parse-number \".5\")        => 0.5
-   (parse-number \"abc\")      => nil"
-
+  Examples:
+  (parse-number \"42\")       => 42
+  (parse-number \"1,234.56\") => 1234.56
+  (parse-number \".5\")        => 0.5
+  (parse-number \"abc\")      => nil"
   [input]
-  (let [s (cond
-            (string? input) (s/trim input)
-            (number? input) (str input)
-            :else nil)]
-    (some-> s
-            valid-number
-            remove-commas
-            normalize-leading-decimal
-            parse-it)))
+  (cond
+    (and (number? input)
+         (not (Double/isNaN input))
+         (not (Double/isInfinite input)))
+    input
+
+    (string? input) (some-> input
+                            s/trim
+                            valid-number
+                            remove-commas
+                            normalize-leading-decimal
+                            parse-it)
+    :else nil))
 
 (defn ranged-rand [start end]
   (+ start (long (rand (- end start)))))

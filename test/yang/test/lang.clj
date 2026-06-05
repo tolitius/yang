@@ -1,4 +1,4 @@
-(ns yang.lang-test
+(ns yang.test.lang
   (:require [clojure.test :refer [deftest testing is are]]
             [yang.lang :as y]))
 
