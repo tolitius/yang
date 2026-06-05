@@ -1,4 +1,4 @@
-(ns yang.test.lang
+(ns yang.lang-test
   (:require [clojure.test :refer [deftest testing is are]]
             [yang.lang :as y]))
 
@@ -32,14 +32,14 @@
                           "1,234.56" 1234.56
                           "-1,234.56" -1234.56))
 
-  (testing "does not parse numbers with number types (only strings)"
+  (testing "parses numbers with number types"
     (are [input expected] (= expected (y/parse-number input))
-                          42 nil
-                          42.5 nil
-                          -10 nil
-                          -3.14 nil
-                          0 nil          ; ← FIXED: removed duplicate 0
-                          0.0 nil)))
+                          42 42
+                          42.5 42.5
+                          -10 -10
+                          -3.14 -3.14
+                          0 0
+                          0.0 0.0)))
 
 (deftest should-reject-invalid-numbers
   (testing "should return nil for invalid formats"
@@ -106,8 +106,8 @@
     (is (= 0 (y/parse-number "0")))
     (is (= 0.0 (y/parse-number "0.0")))
     (is (= 0.0 (y/parse-number "-0.0")))
-    (is (= nil (y/parse-number 0)))
-    (is (= nil (y/parse-number 0.0)))
+    (is (= 0 (y/parse-number 0)))
+    (is (= 0.0 (y/parse-number 0.0)))
     ;; very large numbers
     (is (= 999999999999999 (y/parse-number "999999999999999")))
     (is (= 1.234567891234567 (y/parse-number "1.234567891234567")))
