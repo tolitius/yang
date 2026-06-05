@@ -189,31 +189,53 @@
        (catch Exception e)))
 
 (def ^:private number-re
+  "Regex pattern matching valid number formats: integers, decimals, with optional sign and comma separators."
   #"^[+-]?(?:(?:0|[1-9]\d{0,2}(?:,\d{3})+|[1-9]\d*)(?:\.\d+)?|\.\d+)$")
 
-(defn- remove-commas [^String s]
+(defn- remove-commas
+  "Removes all comma characters from string s."
+  [^String s]
   (if (= -1 (.indexOf s ","))
     s
     (.replace s "," "")))
 
-(defn- valid-number [^String s]
+(defn- valid-number
+  "Returns s if it matches number-re pattern, nil otherwise."
+  [^String s]
   (when (re-matches number-re s)
     s))
 
-(defn- normalize-leading-decimal [^String s]
+(defn- normalize-leading-decimal
+  "Prepends '0' to numbers starting with a decimal point (e.g., '.5' -> '0.5')."
+  [^String s]
   (cond
     (s/starts-with? s ".")  (str "0" s)
     (s/starts-with? s "-.") (str "-0" (subs s 1))
     (s/starts-with? s "+.") (str "+0" (subs s 1))
     :else s))
 
-(defn- parse-it [^String s]
+(defn- parse-it
+  "Parses string s as EDN to convert to number."
+  [^String s]
   (edn/read-string s))
 
-(defn parse-number [input]
-  (when (string? input)
-    (some-> input
-            s/trim
+(defn parse-number
+  "Parses input string to a number (Long or Double).
+   Accepts strings with optional sign, commas, and decimals.
+   Returns nil for invalid formats or non-string inputs.
+
+ Examples:
+   (parse-number \"42\")       => 42
+   (parse-number \"1,234.56\") => 1234.56
+   (parse-number \".5\")        => 0.5
+   (parse-number \"abc\")      => nil"
+
+  [input]
+  (let [s (cond
+            (string? input) (s/trim input)
+            (number? input) (str input)
+            :else nil)]
+    (some-> s
             valid-number
             remove-commas
             normalize-leading-decimal
