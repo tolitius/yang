@@ -231,11 +231,7 @@
   (parse-number \"abc\")      => nil"
   [input]
   (cond
-    (and (number? input)
-         (not (Double/isNaN input))
-         (not (Double/isInfinite input)))
-    input
-
+    (number? input) input
     (string? input) (some-> input
                             s/trim
                             valid-number
