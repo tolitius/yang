@@ -231,13 +231,13 @@
   (parse-number \"abc\")      => nil"
   [input]
   (cond
-    (number? input) input
     (string? input) (some-> input
                             s/trim
                             valid-number
                             remove-commas
                             normalize-leading-decimal
                             parse-it)
+    (number? input) input
     :else nil))
 
 (defn ranged-rand [start end]
