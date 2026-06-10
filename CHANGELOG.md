@@ -1,5 +1,11 @@
 # 0.1.52
 
+### 2026-06-10
+
+enhance parse-number to handle more formats: ".5", "434,354.00", etc.. ([@vidhya-45](https://github.com/vidhya-45))
+
+# 0.1.52
+
 ### 2026-04-03
 
 **Bug Fix**: `rfmk` and `rfmv` functions
@@ -8,12 +14,12 @@ Fixed bug where `rfmk` and `rfmv` could not handle vectors, sets, or sequences a
 
 **Error (before fix):**
 ```
-IllegalArgumentException: No implementation of method: :alter-name of protocol: 
+IllegalArgumentException: No implementation of method: :alter-name of protocol:
 #'camel-snake-kebab.internals.alter-name/AlterName found for class: java.lang.Integer
 ```
 
 **Root cause:** The functions called `update-keys`/`update-vals` directly on the input parameter,
-assuming it was always a map. When a vector was passed, `update-keys` treated vector indices 
+assuming it was always a map. When a vector was passed, `update-keys` treated vector indices
 (integers 0, 1, 2...) as keys and tried to transform them with the provided function.
 
 **Fix:** Changed both functions to use their internal `walk` helper for the top-level input,
