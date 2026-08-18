@@ -514,11 +514,13 @@
    -> {:a {:b {:z 3, :c 3, :d {:z 9, :x 1, :y 2}}, :e 103}, :f 4}"
   [f & maps]
   (apply
-    (fn m [& maps]
-      (if (every? map? maps)
-        (apply merge-with m maps)
-        (apply f maps)))
-    maps))
+   (fn m [& maps]
+     (let [maps (remove nil? maps)]     ;; nil is "nothing to merge", not a value for f
+       (cond
+         (every? map? maps) (apply merge-with m maps)
+         (seq maps)          (apply f maps)
+         :else               nil)))
+   maps))
 
 (defn remove-deep [key-set data]
   "from https://stackoverflow.com/a/52041784/114359
