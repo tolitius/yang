@@ -1,4 +1,10 @@
-# 0.1.52
+# 0.1.54
+
+### 2026-08-11
+
+Fix group-by-ns: convert sequence to map before key transformation ([@sowmyag1904](https://github.com/sowmyag1904))
+
+# 0.1.53
 
 ### 2026-06-10
 
