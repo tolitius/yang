@@ -485,6 +485,7 @@
        :b {:one :b-one, :two :b-two}}"
   [m]
   (-> (group-by (comp namespace key) m)
+      (fmv #(into {} %))
       (fmk keyword)
       (fmv #(fmk % (comp keyword name)))))
 
