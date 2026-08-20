@@ -440,6 +440,20 @@
           (when-not (none? k)
             [k v]))))
 
+(defn remove-nil-keys
+  "recursively drops nil-valued keys at every level, keeping false/empty/zero values intact
+   use this before merge-maps/deep-merge-with if nil should mean 'absent' instead of an override value
+
+   => (remove-nil-keys {:a 1 :b nil :c {:d 1 :e nil}})
+      {:a 1, :c {:d 1}}"
+  [m]
+  (walk/postwalk
+   (fn [x]
+     (if (map? x)
+       (into {} (remove (comp nil? val)) x)
+       x))
+   m))
+
 (defn props->map
   "java.util.Properties to map"
   [props]
@@ -513,14 +527,11 @@
                 {:a {:b {:c 2 :d {:z 9} :z 3} :e 100}})
    -> {:a {:b {:z 3, :c 3, :d {:z 9, :x 1, :y 2}}, :e 103}, :f 4}"
   [f & maps]
-  (apply
-   (fn m [& maps]
-     (let [maps (remove nil? maps)]     ;; nil is "nothing to merge", not a value for f
-       (cond
-         (every? map? maps) (apply merge-with m maps)
-         (seq maps)          (apply f maps)
-         :else               nil)))
-   maps))
+  (letfn [(merge-level [& values]
+            (if (every? map? values)
+              (apply merge-with merge-level values)
+              (apply f values)))]
+    (apply merge-with merge-level maps)))
 
 (defn remove-deep [key-set data]
   "from https://stackoverflow.com/a/52041784/114359

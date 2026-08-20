@@ -124,3 +124,26 @@
     (is (= 0.000001 (y/parse-number "0.000001")))
     (is (= 0.123456789 (y/parse-number "0.123456789")))))
 
+
+(deftest should-merge-nil-values-consistently
+  (testing "nil map arguments are ignored"
+    (is (= {:a 1}
+           (y/merge-maps {:a 1} nil)))
+    (is (= {:a 3 :b 2}
+           (y/merge-maps {:a 1 :b 2} nil {:a 3}))))
+
+  (testing "explicit nil values are preserved"
+    (is (= {:a nil}
+           (y/merge-maps {:a 1} {:a nil})))
+    (is (= {:a 3}
+           (y/merge-maps {:a 1} {:a nil} {:a 3})))
+    (is (= {:a 1}
+           (y/deep-merge-with (fnil + 0 0)
+                              {:a 1}
+                              {:a nil}))))
+
+  (testing "nil keys can be removed before merging"
+    (is (= {:a 1}
+           (y/remove-nil-keys {:a 1 :b nil})))
+    (is (= {:a {:b 1}}
+           (y/remove-nil-keys {:a {:b 1 :c nil}})))))
