@@ -535,6 +535,30 @@
 (defn merge-maps [& m]
   (apply deep-merge-with (fn [_ v] v) m))
 
+(defn merge-maps-strict
+  "like merge-maps, but treats empty values as absent instead of an override
+   value: nil map arguments are dropped, and empty values (nil, \"\", [], {},
+   reusing remove-empty) are stripped from each map recursively before
+   merging - safe from the arity/data-loss issues merge-maps has when nils
+   are involved, since deep-merge-with never sees a nil
+   assumes every input is a map (or nil)
+
+   => (merge-maps-strict {:a 1} nil)
+      {:a 1}
+
+   => (merge-maps-strict {:a {:b 1 :c 2}} {:a nil})
+      {:a {:b 1, :c 2}}
+
+   => (merge-maps-strict {:a 1} {:a nil} {:a 3})
+      {:a 3}"
+  [& m]
+  (letfn [(clean [x]
+            (remove-empty (update-vals x #(if (map? %) (clean %) %))))]
+    (->> m
+         (remove nil?)
+         (map clean)
+         (apply merge-maps))))
+
 (defn dissoc-in
   "from https://github.com/clojure/core.incubator
 

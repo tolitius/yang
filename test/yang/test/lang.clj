@@ -124,3 +124,42 @@
     (is (= 0.000001 (y/parse-number "0.000001")))
     (is (= 0.123456789 (y/parse-number "0.123456789")))))
 
+(deftest should-merge-maps-strict-without-throwing
+  (testing "nil map arguments are dropped instead of causing data loss"
+    (is (= {:a 1}
+           (y/merge-maps-strict {:a 1} nil)))
+    (is (= {:a 1}
+           (y/merge-maps-strict nil {:a 1})))
+    (is (nil? (y/merge-maps-strict nil nil))))
+
+  (testing "does not throw ArityException with 3+ maps when one is nil"
+    (is (= {:a 3 :b 2}
+           (y/merge-maps-strict {:a 1 :b 2} nil {:a 3})))
+    (is (= {:a 3}
+           (y/merge-maps-strict {:a 1} {:a nil} {:a 3})))
+    (is (= {:a {:b 1 :c 2}}
+           (y/merge-maps-strict {:a {:b 1}} nil {:a {:c 2}}))))
+
+  (testing "explicit nil values are treated as absent rather than an override"
+    (is (= {:a {:b 1 :c 2}}
+           (y/merge-maps-strict {:a {:b 1 :c 2}} {:a nil}))))
+
+  (testing "nil-valued keys are dropped at every nesting level"
+    (is (= {:a {:b {:c 1}}}
+           (y/merge-maps-strict {:a {:b {:c 1 :d nil}}}))))
+
+  (testing "keeps false and zero, but drops empty collections/strings too, reusing remove-empty"
+    (is (= {:a false :c 0}
+           (y/merge-maps-strict {:a false :b [] :c 0 :d nil}))))
+
+  (testing "single map argument is returned cleaned, unaffected by merging"
+    (is (= {:a 1}
+           (y/merge-maps-strict {:a 1 :b nil}))))
+
+  (testing "a map that becomes entirely empty after cleaning merges away cleanly"
+    (is (= {} (y/merge-maps-strict {:a nil} {:b nil}))))
+
+  (testing "regression: the original merge-maps bug still reproduces, confirming it was left untouched"
+    (is (nil? (y/merge-maps {:a 1} nil)))
+    (is (thrown? clojure.lang.ArityException
+                 (y/merge-maps {:a 1 :b 2} nil {:a 3})))))
