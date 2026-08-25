@@ -532,8 +532,11 @@
         node))
     data))
 
+(defn- remove-nil-maps [maps]
+  (remove nil? maps))
+
 (defn merge-maps [& m]
-  (apply deep-merge-with (fn [_ v] v) m))
+  (apply deep-merge-with (fn [_ v] v) (remove-nil-maps m)))
 
 (defn dissoc-in
   "from https://github.com/clojure/core.incubator

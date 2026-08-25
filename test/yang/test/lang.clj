@@ -124,3 +124,10 @@
     (is (= 0.000001 (y/parse-number "0.000001")))
     (is (= 0.123456789 (y/parse-number "0.123456789")))))
 
+(testing "merge-maps ignores nil map arguments"
+  (is (= {:a 1}
+         (y/merge-maps {:a 1} nil)))
+  (is (= {:a 1}
+         (y/merge-maps nil {:a 1})))
+  (is (= {:a 3 :b 2}
+         (y/merge-maps {:a 1 :b 2} nil {:a 3}))))
