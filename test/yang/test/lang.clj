@@ -159,7 +159,10 @@
   (testing "a map that becomes entirely empty after cleaning merges away cleanly"
     (is (= {} (y/merge-maps-strict {:a nil} {:b nil}))))
 
-  (testing "regression: the original merge-maps bug still reproduces, confirming it was left untouched"
-    (is (nil? (y/merge-maps {:a 1} nil)))
-    (is (thrown? clojure.lang.ArityException
-                 (y/merge-maps {:a 1 :b 2} nil {:a 3})))))
+  (testing "merge-maps ignores nil map arguments"
+    (is (= {:a 1}
+           (y/merge-maps {:a 1} nil)))
+    (is (= {:a 1}
+           (y/merge-maps nil {:a 1})))
+    (is (= {:a 3 :b 2}
+           (y/merge-maps {:a 1 :b 2} nil {:a 3})))))
