@@ -430,7 +430,7 @@ $14 ==> {:answer-to-life 42, :meaning-of-life-question "what is the..."}
 
 ## license
 
-Copyright © 2020 tolitius
+Copyright © 2026 tolitius
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.

@@ -1,3 +1,9 @@
+# 0.1.55
+
+### 2026-11-18
+
+add `yang.codec/uuid->base62` and `yang.codec/base62->uuid`: encode UUIDs as 22 character base62 strings (sortable, left padded); decoding accepts 1 to 22 characters, restoring omitted leading zeros
+
 # 0.1.54
 
 ### 2026-08-11
